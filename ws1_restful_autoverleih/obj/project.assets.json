@@ -2,6 +2,182 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v2.0": {
+      "Amazon.Lambda.APIGatewayEvents/1.1.2": {
+        "type": "package",
+        "dependencies": {
+          "NETStandard.Library": "1.6.0",
+          "Newtonsoft.Json": "9.0.1",
+          "System.Collections": "4.0.11",
+          "System.Runtime": "4.1.0",
+          "System.Runtime.Serialization.Primitives": "4.1.1"
+        },
+        "compile": {
+          "lib/netstandard1.3/Amazon.Lambda.APIGatewayEvents.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/Amazon.Lambda.APIGatewayEvents.dll": {}
+        }
+      },
+      "Amazon.Lambda.AspNetCoreServer/2.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Amazon.Lambda.APIGatewayEvents": "1.1.2",
+          "Amazon.Lambda.Core": "1.0.0",
+          "Amazon.Lambda.Logging.AspNetCore": "2.0.0",
+          "Amazon.Lambda.Serialization.Json": "1.1.0",
+          "Microsoft.AspNetCore": "2.0.0",
+          "Microsoft.AspNetCore.Hosting": "2.0.0",
+          "Newtonsoft.Json": "10.0.1"
+        },
+        "compile": {
+          "lib/netstandard2.0/Amazon.Lambda.AspNetCoreServer.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Amazon.Lambda.AspNetCoreServer.dll": {}
+        }
+      },
+      "Amazon.Lambda.Core/1.0.0": {
+        "type": "package",
+        "dependencies": {
+          "System.Console": "4.0.0",
+          "System.IO": "4.1.0",
+          "System.Runtime": "4.1.0"
+        },
+        "compile": {
+          "lib/netstandard1.3/Amazon.Lambda.Core.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/Amazon.Lambda.Core.dll": {}
+        }
+      },
+      "Amazon.Lambda.Logging.AspNetCore/2.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Amazon.Lambda.Core": "1.0.0",
+          "Microsoft.Extensions.Configuration.Abstractions": "2.0.0",
+          "Microsoft.Extensions.Logging": "2.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "2.0.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Amazon.Lambda.Logging.AspNetCore.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Amazon.Lambda.Logging.AspNetCore.dll": {}
+        }
+      },
+      "Amazon.Lambda.Serialization.Json/1.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Amazon.Lambda.Core": "1.0.0",
+          "NETStandard.Library": "1.6.0",
+          "Newtonsoft.Json": "9.0.1",
+          "System.Reflection": "4.1.0",
+          "System.Runtime": "4.1.0"
+        },
+        "compile": {
+          "lib/netstandard1.3/Amazon.Lambda.Serialization.Json.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/Amazon.Lambda.Serialization.Json.dll": {}
+        }
+      },
+      "Amazon.Lambda.Tools/2.1.1": {
+        "type": "package",
+        "dependencies": {
+          "AWSSDK.CloudFormation": "3.3.9",
+          "AWSSDK.IdentityManagement": "3.3.5.3",
+          "AWSSDK.Lambda": "3.3.10",
+          "AWSSDK.S3": "3.3.16.2",
+          "AWSSDK.SecurityToken": "3.3.3.3",
+          "Microsoft.NETCore.App": "2.0.0",
+          "Newtonsoft.Json": "9.0.1",
+          "System.IO.Compression.ZipFile": "4.0.1",
+          "System.Runtime.Loader": "4.0.0",
+          "YamlDotNet.Signed": "4.2.1"
+        },
+        "compile": {
+          "lib/netcoreapp2.0/dotnet-lambda.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp2.0/dotnet-lambda.dll": {}
+        }
+      },
+      "AWSSDK.CloudFormation/3.3.9": {
+        "type": "package",
+        "dependencies": {
+          "AWSSDK.Core": "[3.3.19, 3.4.0)"
+        },
+        "compile": {
+          "lib/netstandard1.3/AWSSDK.CloudFormation.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/AWSSDK.CloudFormation.dll": {}
+        }
+      },
+      "AWSSDK.Core/3.3.21.6": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.CSharp": "4.0.1",
+          "System.Net.Requests": "4.0.11",
+          "System.Reflection.TypeExtensions": "4.1.0",
+          "System.Security.Cryptography.Csp": "4.0.0",
+          "System.Threading.Thread": "4.0.0"
+        },
+        "compile": {
+          "lib/netstandard1.3/AWSSDK.Core.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/AWSSDK.Core.dll": {}
+        }
+      },
+      "AWSSDK.IdentityManagement/3.3.5.3": {
+        "type": "package",
+        "dependencies": {
+          "AWSSDK.Core": "[3.3.19, 3.4.0)"
+        },
+        "compile": {
+          "lib/netstandard1.3/AWSSDK.IdentityManagement.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/AWSSDK.IdentityManagement.dll": {}
+        }
+      },
+      "AWSSDK.Lambda/3.3.10": {
+        "type": "package",
+        "dependencies": {
+          "AWSSDK.Core": "[3.3.19, 3.4.0)"
+        },
+        "compile": {
+          "lib/netstandard1.3/AWSSDK.Lambda.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/AWSSDK.Lambda.dll": {}
+        }
+      },
+      "AWSSDK.S3/3.3.16.2": {
+        "type": "package",
+        "dependencies": {
+          "AWSSDK.Core": "[3.3.21.6, 3.4.0)"
+        },
+        "compile": {
+          "lib/netstandard1.3/AWSSDK.S3.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/AWSSDK.S3.dll": {}
+        }
+      },
+      "AWSSDK.SecurityToken/3.3.3.3": {
+        "type": "package",
+        "dependencies": {
+          "AWSSDK.Core": "[3.3.19, 3.4.0)"
+        },
+        "compile": {
+          "lib/netstandard1.3/AWSSDK.SecurityToken.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/AWSSDK.SecurityToken.dll": {}
+        }
+      },
       "Libuv/1.10.0": {
         "type": "package",
         "dependencies": {
@@ -3540,6 +3716,26 @@
           }
         }
       },
+      "System.IO.Compression.ZipFile/4.0.1": {
+        "type": "package",
+        "dependencies": {
+          "System.Buffers": "4.0.0",
+          "System.IO": "4.1.0",
+          "System.IO.Compression": "4.1.0",
+          "System.IO.FileSystem": "4.0.1",
+          "System.IO.FileSystem.Primitives": "4.0.1",
+          "System.Resources.ResourceManager": "4.0.1",
+          "System.Runtime": "4.1.0",
+          "System.Runtime.Extensions": "4.1.0",
+          "System.Text.Encoding": "4.0.11"
+        },
+        "compile": {
+          "ref/netstandard1.3/System.IO.Compression.ZipFile.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/System.IO.Compression.ZipFile.dll": {}
+        }
+      },
       "System.IO.FileSystem/4.3.0": {
         "type": "package",
         "dependencies": {
@@ -3719,6 +3915,37 @@
           "ref/netstandard1.3/System.Net.Primitives.dll": {}
         }
       },
+      "System.Net.Requests/4.0.11": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
+          "System.Collections": "4.0.11",
+          "System.Diagnostics.Debug": "4.0.11",
+          "System.Diagnostics.Tracing": "4.1.0",
+          "System.Globalization": "4.0.11",
+          "System.IO": "4.1.0",
+          "System.Net.Http": "4.1.0",
+          "System.Net.Primitives": "4.0.11",
+          "System.Net.WebHeaderCollection": "4.0.1",
+          "System.Resources.ResourceManager": "4.0.1",
+          "System.Runtime": "4.1.0",
+          "System.Threading": "4.0.11",
+          "System.Threading.Tasks": "4.0.11"
+        },
+        "compile": {
+          "ref/netstandard1.3/System.Net.Requests.dll": {}
+        },
+        "runtimeTargets": {
+          "runtimes/unix/lib/netstandard1.3/System.Net.Requests.dll": {
+            "assetType": "runtime",
+            "rid": "unix"
+          },
+          "runtimes/win/lib/netstandard1.3/System.Net.Requests.dll": {
+            "assetType": "runtime",
+            "rid": "win"
+          }
+        }
+      },
       "System.Net.Security/4.3.0": {
         "type": "package",
         "dependencies": {
@@ -3777,6 +4004,21 @@
         },
         "compile": {
           "ref/netstandard1.3/System.Net.Sockets.dll": {}
+        }
+      },
+      "System.Net.WebHeaderCollection/4.0.1": {
+        "type": "package",
+        "dependencies": {
+          "System.Collections": "4.0.11",
+          "System.Resources.ResourceManager": "4.0.1",
+          "System.Runtime": "4.1.0",
+          "System.Runtime.Extensions": "4.1.0"
+        },
+        "compile": {
+          "ref/netstandard1.3/System.Net.WebHeaderCollection.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/System.Net.WebHeaderCollection.dll": {}
         }
       },
       "System.Numerics.Vectors/4.4.0": {
@@ -4038,6 +4280,20 @@
           }
         }
       },
+      "System.Runtime.Loader/4.0.0": {
+        "type": "package",
+        "dependencies": {
+          "System.IO": "4.1.0",
+          "System.Reflection": "4.1.0",
+          "System.Runtime": "4.1.0"
+        },
+        "compile": {
+          "ref/netstandard1.5/System.Runtime.Loader.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.5/System.Runtime.Loader.dll": {}
+        }
+      },
       "System.Runtime.Numerics/4.3.0": {
         "type": "package",
         "dependencies": {
@@ -4220,7 +4476,7 @@
           "System.Threading": "4.3.0"
         },
         "compile": {
-          "ref/netstandard1.3/_._": {}
+          "ref/netstandard1.3/System.Security.Cryptography.Csp.dll": {}
         },
         "runtimeTargets": {
           "runtimes/unix/lib/netstandard1.3/System.Security.Cryptography.Csp.dll": {
@@ -4746,10 +5002,312 @@
         "runtime": {
           "lib/netstandard1.3/Microsoft.WindowsAzure.Storage.dll": {}
         }
+      },
+      "YamlDotNet.Signed/4.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard1.3/YamlDotNet.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.3/YamlDotNet.dll": {}
+        }
       }
     }
   },
   "libraries": {
+    "Amazon.Lambda.APIGatewayEvents/1.1.2": {
+      "sha512": "eSEImjRFIVOfzTZyiEOs/NBM0qj4MyHRZUSXQIF+8fUdd+xSMxWT/l5wCg3w9XBw7v0MScSOXwh7/nzkXnNi8g==",
+      "type": "package",
+      "path": "amazon.lambda.apigatewayevents/1.1.2",
+      "files": [
+        "amazon.lambda.apigatewayevents.1.1.2.nupkg.sha512",
+        "amazon.lambda.apigatewayevents.nuspec",
+        "lib/netstandard1.3/Amazon.Lambda.APIGatewayEvents.dll",
+        "lib/netstandard1.3/Amazon.Lambda.APIGatewayEvents.xml"
+      ]
+    },
+    "Amazon.Lambda.AspNetCoreServer/2.0.1": {
+      "sha512": "5GgTNG4P/G/XRsOFPUM8eg56oJ22pnPIdarCQJqReTutbFzzkjBSMlW5qfF5PiMM2nB3mBFqqeMrHcCocwCCMg==",
+      "type": "package",
+      "path": "amazon.lambda.aspnetcoreserver/2.0.1",
+      "files": [
+        "amazon.lambda.aspnetcoreserver.2.0.1.nupkg.sha512",
+        "amazon.lambda.aspnetcoreserver.nuspec",
+        "lib/netstandard2.0/Amazon.Lambda.AspNetCoreServer.dll",
+        "lib/netstandard2.0/Amazon.Lambda.AspNetCoreServer.xml"
+      ]
+    },
+    "Amazon.Lambda.Core/1.0.0": {
+      "sha512": "+pBYGHaOaDAhu2j8BA5MhKLwxZM7lgmTSroGyCzEqWMBx+uc+QtpED2ShCAkKjKeedXH+LvJpQAUkEtW7rfcgQ==",
+      "type": "package",
+      "path": "amazon.lambda.core/1.0.0",
+      "files": [
+        "amazon.lambda.core.1.0.0.nupkg.sha512",
+        "amazon.lambda.core.nuspec",
+        "lib/netstandard1.3/Amazon.Lambda.Core.dll",
+        "lib/netstandard1.3/Amazon.Lambda.Core.pdb",
+        "lib/netstandard1.3/Amazon.Lambda.Core.xml",
+        "src/Amazon.Lambda.Core/IClientApplication.cs",
+        "src/Amazon.Lambda.Core/IClientContext.cs",
+        "src/Amazon.Lambda.Core/ICognitoIdentity.cs",
+        "src/Amazon.Lambda.Core/ILambdaContext.cs",
+        "src/Amazon.Lambda.Core/ILambdaLogger.cs",
+        "src/Amazon.Lambda.Core/ILambdaSerializer.cs",
+        "src/Amazon.Lambda.Core/LambdaLogger.cs",
+        "src/Amazon.Lambda.Core/LambdaSerializerAttribute.cs",
+        "src/Amazon.Lambda.Core/Properties/AssemblyInfo.cs"
+      ]
+    },
+    "Amazon.Lambda.Logging.AspNetCore/2.0.0": {
+      "sha512": "4uWzuZsVJOSYKg3hjDDVSNKobUS8uf8KrS0VvdTriu6JCXPvDPLaTLRa4orXB8rgDCBW5iin0D54zHiBloWe2w==",
+      "type": "package",
+      "path": "amazon.lambda.logging.aspnetcore/2.0.0",
+      "files": [
+        "amazon.lambda.logging.aspnetcore.2.0.0.nupkg.sha512",
+        "amazon.lambda.logging.aspnetcore.nuspec",
+        "lib/netstandard2.0/Amazon.Lambda.Logging.AspNetCore.dll",
+        "lib/netstandard2.0/Amazon.Lambda.Logging.AspNetCore.xml"
+      ]
+    },
+    "Amazon.Lambda.Serialization.Json/1.1.0": {
+      "sha512": "xRovd71Kji08OYj3PkHlNMA/RgRdyGj2TLRFt7R5JrzHkrrH8fV8DjdaCDR1SLf8p8LJF6fQjEHdW5vSDOArrw==",
+      "type": "package",
+      "path": "amazon.lambda.serialization.json/1.1.0",
+      "files": [
+        "amazon.lambda.serialization.json.1.1.0.nupkg.sha512",
+        "amazon.lambda.serialization.json.nuspec",
+        "lib/netstandard1.3/Amazon.Lambda.Serialization.Json.dll",
+        "lib/netstandard1.3/Amazon.Lambda.Serialization.Json.xml"
+      ]
+    },
+    "Amazon.Lambda.Tools/2.1.1": {
+      "sha512": "XIc8RxGerNrNZ2OqFX8m0eNkDRpshlNP3Kls+KJRHEWnpilrIjuWmlL2fnujV/OQ240VySwmwslxcX9nNhFUog==",
+      "type": "package",
+      "path": "amazon.lambda.tools/2.1.1",
+      "files": [
+        "amazon.lambda.tools.2.1.1.nupkg.sha512",
+        "amazon.lambda.tools.nuspec",
+        "lib/netcoreapp1.0/dotnet-lambda.dll",
+        "lib/netcoreapp1.0/dotnet-lambda.runtimeconfig.json",
+        "lib/netcoreapp1.0/dotnet-lambda.xml",
+        "lib/netcoreapp2.0/dotnet-lambda.dll",
+        "lib/netcoreapp2.0/dotnet-lambda.runtimeconfig.json",
+        "lib/netcoreapp2.0/dotnet-lambda.xml"
+      ]
+    },
+    "AWSSDK.CloudFormation/3.3.9": {
+      "sha512": "y2ZgCXjRyA0knmtYon6GTjpFG+B9+wRRH32e6WbrbkAlyP4w9wgLOGEZTWMjGxdBGaiq4yE8HP2ax8G9QlmX4Q==",
+      "type": "package",
+      "path": "awssdk.cloudformation/3.3.9",
+      "files": [
+        "analyzers/dotnet/cs/AWSSDK.CloudFormation.CodeAnalysis.dll",
+        "awssdk.cloudformation.3.3.9.nupkg.sha512",
+        "awssdk.cloudformation.nuspec",
+        "lib/MonoAndroid10/AWSSDK.CloudFormation.XML",
+        "lib/MonoAndroid10/AWSSDK.CloudFormation.dll",
+        "lib/MonoTouch10/AWSSDK.CloudFormation.XML",
+        "lib/MonoTouch10/AWSSDK.CloudFormation.dll",
+        "lib/MonoTouch10/AWSSDK.CloudFormation.pdb",
+        "lib/Xamarin.iOS10/AWSSDK.CloudFormation.XML",
+        "lib/Xamarin.iOS10/AWSSDK.CloudFormation.dll",
+        "lib/net35/AWSSDK.CloudFormation.dll",
+        "lib/net35/AWSSDK.CloudFormation.pdb",
+        "lib/net35/AWSSDK.CloudFormation.xml",
+        "lib/net45/AWSSDK.CloudFormation.dll",
+        "lib/net45/AWSSDK.CloudFormation.pdb",
+        "lib/net45/AWSSDK.CloudFormation.xml",
+        "lib/netstandard1.3/AWSSDK.CloudFormation.dll",
+        "lib/netstandard1.3/AWSSDK.CloudFormation.pdb",
+        "lib/netstandard1.3/AWSSDK.CloudFormation.xml",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.CloudFormation.XML",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.CloudFormation.dll",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.CloudFormation.pdb",
+        "lib/uap/AWSSDK.CloudFormation.XML",
+        "lib/uap/AWSSDK.CloudFormation.dll",
+        "lib/uap/AWSSDK.CloudFormation.pdb",
+        "tools/install.ps1",
+        "tools/uninstall.ps1"
+      ]
+    },
+    "AWSSDK.Core/3.3.21.6": {
+      "sha512": "NT0KWLE0CiBEKh+v65daWVODUW8T0Xi4yEZF8NTF0p5d8JbYlmaM5NFoK/a2tg1LAF12/Orqd8jJ2J1bL8hu/Q==",
+      "type": "package",
+      "path": "awssdk.core/3.3.21.6",
+      "files": [
+        "awssdk.core.3.3.21.6.nupkg.sha512",
+        "awssdk.core.nuspec",
+        "lib/MonoAndroid10/AWSSDK.Core.XML",
+        "lib/MonoAndroid10/AWSSDK.Core.dll",
+        "lib/MonoAndroid10/AWSSDK.Core.pdb",
+        "lib/MonoTouch10/AWSSDK.Core.XML",
+        "lib/MonoTouch10/AWSSDK.Core.dll",
+        "lib/Xamarin.Mac20/AWSSDK.Core.XML",
+        "lib/Xamarin.Mac20/AWSSDK.Core.dll",
+        "lib/Xamarin.iOS10/AWSSDK.Core.XML",
+        "lib/Xamarin.iOS10/AWSSDK.Core.dll",
+        "lib/net35/AWSSDK.Core.dll",
+        "lib/net35/AWSSDK.Core.pdb",
+        "lib/net35/AWSSDK.Core.xml",
+        "lib/net45/AWSSDK.Core.dll",
+        "lib/net45/AWSSDK.Core.pdb",
+        "lib/net45/AWSSDK.Core.xml",
+        "lib/netstandard1.3/AWSSDK.Core.dll",
+        "lib/netstandard1.3/AWSSDK.Core.pdb",
+        "lib/netstandard1.3/AWSSDK.Core.xml",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.Core.XML",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.Core.dll",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.Core.pdb",
+        "lib/uap/AWSSDK.Core.XML",
+        "lib/uap/AWSSDK.Core.dll",
+        "lib/uap/AWSSDK.Core.pdb",
+        "lib/win8/AWSSDK.Core.XML",
+        "lib/win8/AWSSDK.Core.dll",
+        "lib/win8/AWSSDK.Core.pdb",
+        "lib/wp8/AWSSDK.Core.XML",
+        "lib/wp8/AWSSDK.Core.dll",
+        "lib/wp8/AWSSDK.Core.pdb",
+        "lib/wpa81/AWSSDK.Core.XML",
+        "lib/wpa81/AWSSDK.Core.dll",
+        "lib/wpa81/AWSSDK.Core.pdb",
+        "tools/account-management.ps1"
+      ]
+    },
+    "AWSSDK.IdentityManagement/3.3.5.3": {
+      "sha512": "tiyhAzbvVyRv+1LYqHZ5rC1Bq5jKNm06NBzs5bRT4KwHVJgGZ1AppfqF15VBLlkwJxcwyw1/4ITxHfWbOgHJ0Q==",
+      "type": "package",
+      "path": "awssdk.identitymanagement/3.3.5.3",
+      "files": [
+        "analyzers/dotnet/cs/AWSSDK.IdentityManagement.CodeAnalysis.dll",
+        "awssdk.identitymanagement.3.3.5.3.nupkg.sha512",
+        "awssdk.identitymanagement.nuspec",
+        "lib/MonoAndroid10/AWSSDK.IdentityManagement.XML",
+        "lib/MonoAndroid10/AWSSDK.IdentityManagement.dll",
+        "lib/MonoTouch10/AWSSDK.IdentityManagement.XML",
+        "lib/MonoTouch10/AWSSDK.IdentityManagement.dll",
+        "lib/MonoTouch10/AWSSDK.IdentityManagement.pdb",
+        "lib/Xamarin.iOS10/AWSSDK.IdentityManagement.XML",
+        "lib/Xamarin.iOS10/AWSSDK.IdentityManagement.dll",
+        "lib/net35/AWSSDK.IdentityManagement.dll",
+        "lib/net35/AWSSDK.IdentityManagement.pdb",
+        "lib/net35/AWSSDK.IdentityManagement.xml",
+        "lib/net45/AWSSDK.IdentityManagement.dll",
+        "lib/net45/AWSSDK.IdentityManagement.pdb",
+        "lib/net45/AWSSDK.IdentityManagement.xml",
+        "lib/netstandard1.3/AWSSDK.IdentityManagement.dll",
+        "lib/netstandard1.3/AWSSDK.IdentityManagement.pdb",
+        "lib/netstandard1.3/AWSSDK.IdentityManagement.xml",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.IdentityManagement.XML",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.IdentityManagement.dll",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.IdentityManagement.pdb",
+        "lib/uap/AWSSDK.IdentityManagement.XML",
+        "lib/uap/AWSSDK.IdentityManagement.dll",
+        "lib/uap/AWSSDK.IdentityManagement.pdb",
+        "tools/install.ps1",
+        "tools/uninstall.ps1"
+      ]
+    },
+    "AWSSDK.Lambda/3.3.10": {
+      "sha512": "LLUwFfE6RcfzB+m+Pog4DPqEGAPk+WNFLevhTakxxAGLdncbGKWqQbP81ebcGuhhivCuLn/CnEEfPVRzrVlwdQ==",
+      "type": "package",
+      "path": "awssdk.lambda/3.3.10",
+      "files": [
+        "analyzers/dotnet/cs/AWSSDK.Lambda.CodeAnalysis.dll",
+        "awssdk.lambda.3.3.10.nupkg.sha512",
+        "awssdk.lambda.nuspec",
+        "lib/MonoAndroid10/AWSSDK.Lambda.XML",
+        "lib/MonoAndroid10/AWSSDK.Lambda.dll",
+        "lib/MonoTouch10/AWSSDK.Lambda.XML",
+        "lib/MonoTouch10/AWSSDK.Lambda.dll",
+        "lib/MonoTouch10/AWSSDK.Lambda.pdb",
+        "lib/Xamarin.iOS10/AWSSDK.Lambda.XML",
+        "lib/Xamarin.iOS10/AWSSDK.Lambda.dll",
+        "lib/net35/AWSSDK.Lambda.dll",
+        "lib/net35/AWSSDK.Lambda.pdb",
+        "lib/net35/AWSSDK.Lambda.xml",
+        "lib/net45/AWSSDK.Lambda.dll",
+        "lib/net45/AWSSDK.Lambda.pdb",
+        "lib/net45/AWSSDK.Lambda.xml",
+        "lib/netstandard1.3/AWSSDK.Lambda.dll",
+        "lib/netstandard1.3/AWSSDK.Lambda.pdb",
+        "lib/netstandard1.3/AWSSDK.Lambda.xml",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.Lambda.XML",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.Lambda.dll",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.Lambda.pdb",
+        "lib/uap/AWSSDK.Lambda.XML",
+        "lib/uap/AWSSDK.Lambda.dll",
+        "lib/uap/AWSSDK.Lambda.pdb",
+        "tools/install.ps1",
+        "tools/uninstall.ps1"
+      ]
+    },
+    "AWSSDK.S3/3.3.16.2": {
+      "sha512": "eKMkT6nrmOwOYrJQirdKweTvetUJqyb3IZaEuFrU3ZewtTtT5vVell84ZBzgtZ7Yyzd4I3OfckGWVCW0+Yxlvw==",
+      "type": "package",
+      "path": "awssdk.s3/3.3.16.2",
+      "files": [
+        "analyzers/dotnet/cs/AWSSDK.S3.CodeAnalysis.dll",
+        "awssdk.s3.3.3.16.2.nupkg.sha512",
+        "awssdk.s3.nuspec",
+        "lib/MonoAndroid10/AWSSDK.S3.XML",
+        "lib/MonoAndroid10/AWSSDK.S3.dll",
+        "lib/MonoTouch10/AWSSDK.S3.XML",
+        "lib/MonoTouch10/AWSSDK.S3.dll",
+        "lib/MonoTouch10/AWSSDK.S3.pdb",
+        "lib/Xamarin.iOS10/AWSSDK.S3.XML",
+        "lib/Xamarin.iOS10/AWSSDK.S3.dll",
+        "lib/net35/AWSSDK.S3.dll",
+        "lib/net35/AWSSDK.S3.pdb",
+        "lib/net35/AWSSDK.S3.xml",
+        "lib/net45/AWSSDK.S3.dll",
+        "lib/net45/AWSSDK.S3.pdb",
+        "lib/net45/AWSSDK.S3.xml",
+        "lib/netstandard1.3/AWSSDK.S3.dll",
+        "lib/netstandard1.3/AWSSDK.S3.pdb",
+        "lib/netstandard1.3/AWSSDK.S3.xml",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.S3.XML",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.S3.dll",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.S3.pdb",
+        "lib/uap/AWSSDK.S3.XML",
+        "lib/uap/AWSSDK.S3.dll",
+        "lib/uap/AWSSDK.S3.pdb",
+        "tools/install.ps1",
+        "tools/uninstall.ps1"
+      ]
+    },
+    "AWSSDK.SecurityToken/3.3.3.3": {
+      "sha512": "98WGEo7DEcIrI2LPqlVSUAbeVt72WEfEzFXk7kxhdvUT476eAQbNFs4XvtjEIPh54xlvwXW22BMe+dC2ufYezA==",
+      "type": "package",
+      "path": "awssdk.securitytoken/3.3.3.3",
+      "files": [
+        "analyzers/dotnet/cs/AWSSDK.SecurityToken.CodeAnalysis.dll",
+        "awssdk.securitytoken.3.3.3.3.nupkg.sha512",
+        "awssdk.securitytoken.nuspec",
+        "lib/MonoAndroid10/AWSSDK.SecurityToken.XML",
+        "lib/MonoAndroid10/AWSSDK.SecurityToken.dll",
+        "lib/MonoTouch10/AWSSDK.SecurityToken.XML",
+        "lib/MonoTouch10/AWSSDK.SecurityToken.dll",
+        "lib/MonoTouch10/AWSSDK.SecurityToken.pdb",
+        "lib/Xamarin.iOS10/AWSSDK.SecurityToken.XML",
+        "lib/Xamarin.iOS10/AWSSDK.SecurityToken.dll",
+        "lib/net35/AWSSDK.SecurityToken.dll",
+        "lib/net35/AWSSDK.SecurityToken.pdb",
+        "lib/net35/AWSSDK.SecurityToken.xml",
+        "lib/net45/AWSSDK.SecurityToken.dll",
+        "lib/net45/AWSSDK.SecurityToken.pdb",
+        "lib/net45/AWSSDK.SecurityToken.xml",
+        "lib/netstandard1.3/AWSSDK.SecurityToken.dll",
+        "lib/netstandard1.3/AWSSDK.SecurityToken.pdb",
+        "lib/netstandard1.3/AWSSDK.SecurityToken.xml",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.SecurityToken.XML",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.SecurityToken.dll",
+        "lib/portable-net45+win8+wpa81+wp8/AWSSDK.SecurityToken.pdb",
+        "lib/uap/AWSSDK.SecurityToken.XML",
+        "lib/uap/AWSSDK.SecurityToken.dll",
+        "lib/uap/AWSSDK.SecurityToken.pdb",
+        "tools/install.ps1",
+        "tools/uninstall.ps1"
+      ]
+    },
     "Libuv/1.10.0": {
       "sha512": "GsCf4q+eyaI49rCPlgYxdxa1SQCysXFFdSJWdstrwxytg4+VPYLYrXD4AT2rjHVJ+UF7SSWX9CapWEYaU4ejVQ==",
       "type": "package",
@@ -9368,6 +9926,43 @@
         "system.io.compression.nuspec"
       ]
     },
+    "System.IO.Compression.ZipFile/4.0.1": {
+      "sha512": "hBQYJzfTbQURF10nLhd+az2NHxsU6MU7AB8RUf4IolBP5lOAm4Luho851xl+CqslmhI5ZH/el8BlngEk4lBkaQ==",
+      "type": "package",
+      "path": "system.io.compression.zipfile/4.0.1",
+      "files": [
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net46/System.IO.Compression.ZipFile.dll",
+        "lib/netstandard1.3/System.IO.Compression.ZipFile.dll",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net46/System.IO.Compression.ZipFile.dll",
+        "ref/netstandard1.3/System.IO.Compression.ZipFile.dll",
+        "ref/netstandard1.3/System.IO.Compression.ZipFile.xml",
+        "ref/netstandard1.3/de/System.IO.Compression.ZipFile.xml",
+        "ref/netstandard1.3/es/System.IO.Compression.ZipFile.xml",
+        "ref/netstandard1.3/fr/System.IO.Compression.ZipFile.xml",
+        "ref/netstandard1.3/it/System.IO.Compression.ZipFile.xml",
+        "ref/netstandard1.3/ja/System.IO.Compression.ZipFile.xml",
+        "ref/netstandard1.3/ko/System.IO.Compression.ZipFile.xml",
+        "ref/netstandard1.3/ru/System.IO.Compression.ZipFile.xml",
+        "ref/netstandard1.3/zh-hans/System.IO.Compression.ZipFile.xml",
+        "ref/netstandard1.3/zh-hant/System.IO.Compression.ZipFile.xml",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "system.io.compression.zipfile.4.0.1.nupkg.sha512",
+        "system.io.compression.zipfile.nuspec"
+      ]
+    },
     "System.IO.FileSystem/4.3.0": {
       "sha512": "3wEMARTnuio+ulnvi+hkRNROYwa1kylvYahhcLk4HSoVdl+xxTFVeVlYOfLwrDPImGls0mDqbMhrza8qnWPTdA==",
       "type": "package",
@@ -9847,6 +10442,87 @@
         "system.net.primitives.nuspec"
       ]
     },
+    "System.Net.Requests/4.0.11": {
+      "sha512": "vxGt7C0cZixN+VqoSW4Yakc1Y9WknmxauDqzxgpw/FnBdz4kQNN51l4wxdXX5VY1xjqy//+G+4CvJWp1+f+y6Q==",
+      "type": "package",
+      "path": "system.net.requests/4.0.11",
+      "files": [
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net45/_._",
+        "lib/portable-net45+win8+wp8+wpa81/_._",
+        "lib/win8/_._",
+        "lib/wp80/_._",
+        "lib/wpa81/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net45/_._",
+        "ref/net46/_._",
+        "ref/netcore50/System.Net.Requests.dll",
+        "ref/netcore50/System.Net.Requests.xml",
+        "ref/netcore50/de/System.Net.Requests.xml",
+        "ref/netcore50/es/System.Net.Requests.xml",
+        "ref/netcore50/fr/System.Net.Requests.xml",
+        "ref/netcore50/it/System.Net.Requests.xml",
+        "ref/netcore50/ja/System.Net.Requests.xml",
+        "ref/netcore50/ko/System.Net.Requests.xml",
+        "ref/netcore50/ru/System.Net.Requests.xml",
+        "ref/netcore50/zh-hans/System.Net.Requests.xml",
+        "ref/netcore50/zh-hant/System.Net.Requests.xml",
+        "ref/netstandard1.0/System.Net.Requests.dll",
+        "ref/netstandard1.0/System.Net.Requests.xml",
+        "ref/netstandard1.0/de/System.Net.Requests.xml",
+        "ref/netstandard1.0/es/System.Net.Requests.xml",
+        "ref/netstandard1.0/fr/System.Net.Requests.xml",
+        "ref/netstandard1.0/it/System.Net.Requests.xml",
+        "ref/netstandard1.0/ja/System.Net.Requests.xml",
+        "ref/netstandard1.0/ko/System.Net.Requests.xml",
+        "ref/netstandard1.0/ru/System.Net.Requests.xml",
+        "ref/netstandard1.0/zh-hans/System.Net.Requests.xml",
+        "ref/netstandard1.0/zh-hant/System.Net.Requests.xml",
+        "ref/netstandard1.1/System.Net.Requests.dll",
+        "ref/netstandard1.1/System.Net.Requests.xml",
+        "ref/netstandard1.1/de/System.Net.Requests.xml",
+        "ref/netstandard1.1/es/System.Net.Requests.xml",
+        "ref/netstandard1.1/fr/System.Net.Requests.xml",
+        "ref/netstandard1.1/it/System.Net.Requests.xml",
+        "ref/netstandard1.1/ja/System.Net.Requests.xml",
+        "ref/netstandard1.1/ko/System.Net.Requests.xml",
+        "ref/netstandard1.1/ru/System.Net.Requests.xml",
+        "ref/netstandard1.1/zh-hans/System.Net.Requests.xml",
+        "ref/netstandard1.1/zh-hant/System.Net.Requests.xml",
+        "ref/netstandard1.3/System.Net.Requests.dll",
+        "ref/netstandard1.3/System.Net.Requests.xml",
+        "ref/netstandard1.3/de/System.Net.Requests.xml",
+        "ref/netstandard1.3/es/System.Net.Requests.xml",
+        "ref/netstandard1.3/fr/System.Net.Requests.xml",
+        "ref/netstandard1.3/it/System.Net.Requests.xml",
+        "ref/netstandard1.3/ja/System.Net.Requests.xml",
+        "ref/netstandard1.3/ko/System.Net.Requests.xml",
+        "ref/netstandard1.3/ru/System.Net.Requests.xml",
+        "ref/netstandard1.3/zh-hans/System.Net.Requests.xml",
+        "ref/netstandard1.3/zh-hant/System.Net.Requests.xml",
+        "ref/portable-net45+win8+wp8+wpa81/_._",
+        "ref/win8/_._",
+        "ref/wp80/_._",
+        "ref/wpa81/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "runtimes/unix/lib/netstandard1.3/System.Net.Requests.dll",
+        "runtimes/win/lib/net46/_._",
+        "runtimes/win/lib/netstandard1.3/System.Net.Requests.dll",
+        "system.net.requests.4.0.11.nupkg.sha512",
+        "system.net.requests.nuspec"
+      ]
+    },
     "System.Net.Security/4.3.0": {
       "sha512": "IgJKNfALqw7JRWp5LMQ5SWHNKvXVz094U6wNE3c1i8bOkMQvgBL+MMQuNt3xl9Qg9iWpj3lFxPZEY6XHmROjMQ==",
       "type": "package",
@@ -9921,6 +10597,43 @@
         "ref/xamarinwatchos10/_._",
         "system.net.sockets.4.3.0.nupkg.sha512",
         "system.net.sockets.nuspec"
+      ]
+    },
+    "System.Net.WebHeaderCollection/4.0.1": {
+      "sha512": "XX2TIAN+wBSAIV51BU2FvvXMdstUa8b0FBSZmDWjZdwUMmggQSifpTOZ5fNH20z9ZCg2fkV1L5SsZnpO2RQDRQ==",
+      "type": "package",
+      "path": "system.net.webheadercollection/4.0.1",
+      "files": [
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net46/_._",
+        "lib/netstandard1.3/System.Net.WebHeaderCollection.dll",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net46/_._",
+        "ref/netstandard1.3/System.Net.WebHeaderCollection.dll",
+        "ref/netstandard1.3/System.Net.WebHeaderCollection.xml",
+        "ref/netstandard1.3/de/System.Net.WebHeaderCollection.xml",
+        "ref/netstandard1.3/es/System.Net.WebHeaderCollection.xml",
+        "ref/netstandard1.3/fr/System.Net.WebHeaderCollection.xml",
+        "ref/netstandard1.3/it/System.Net.WebHeaderCollection.xml",
+        "ref/netstandard1.3/ja/System.Net.WebHeaderCollection.xml",
+        "ref/netstandard1.3/ko/System.Net.WebHeaderCollection.xml",
+        "ref/netstandard1.3/ru/System.Net.WebHeaderCollection.xml",
+        "ref/netstandard1.3/zh-hans/System.Net.WebHeaderCollection.xml",
+        "ref/netstandard1.3/zh-hant/System.Net.WebHeaderCollection.xml",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "system.net.webheadercollection.4.0.1.nupkg.sha512",
+        "system.net.webheadercollection.nuspec"
       ]
     },
     "System.Numerics.Vectors/4.4.0": {
@@ -10831,6 +11544,30 @@
         "runtimes/win/lib/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll",
         "system.runtime.interopservices.runtimeinformation.4.3.0.nupkg.sha512",
         "system.runtime.interopservices.runtimeinformation.nuspec"
+      ]
+    },
+    "System.Runtime.Loader/4.0.0": {
+      "sha512": "4UN78GOVU/mbDFcXkEWtetJT/sJ0yic2gGk1HSlSpWI0TDf421xnrZTDZnwNBapk1GQeYN7U1lTj/aQB1by6ow==",
+      "type": "package",
+      "path": "system.runtime.loader/4.0.0",
+      "files": [
+        "ThirdPartyNotices.txt",
+        "dotnet_library_license.txt",
+        "lib/net462/_._",
+        "lib/netstandard1.5/System.Runtime.Loader.dll",
+        "ref/netstandard1.5/System.Runtime.Loader.dll",
+        "ref/netstandard1.5/System.Runtime.Loader.xml",
+        "ref/netstandard1.5/de/System.Runtime.Loader.xml",
+        "ref/netstandard1.5/es/System.Runtime.Loader.xml",
+        "ref/netstandard1.5/fr/System.Runtime.Loader.xml",
+        "ref/netstandard1.5/it/System.Runtime.Loader.xml",
+        "ref/netstandard1.5/ja/System.Runtime.Loader.xml",
+        "ref/netstandard1.5/ko/System.Runtime.Loader.xml",
+        "ref/netstandard1.5/ru/System.Runtime.Loader.xml",
+        "ref/netstandard1.5/zh-hans/System.Runtime.Loader.xml",
+        "ref/netstandard1.5/zh-hant/System.Runtime.Loader.xml",
+        "system.runtime.loader.4.0.0.nupkg.sha512",
+        "system.runtime.loader.nuspec"
       ]
     },
     "System.Runtime.Numerics/4.3.0": {
@@ -12524,10 +13261,27 @@
         "windowsazure.storage.8.1.4.nupkg.sha512",
         "windowsazure.storage.nuspec"
       ]
+    },
+    "YamlDotNet.Signed/4.2.1": {
+      "sha512": "1vE+3OtCIvHPt//3GD8ZYpZtZ6xYt9hJCMrdmJzg9gMNbKxasvZyKgGVGB5HVBuzLT9dqZDkDaEbnYVfio+ONg==",
+      "type": "package",
+      "path": "yamldotnet.signed/4.2.1",
+      "files": [
+        "lib/net35/YamlDotNet.dll",
+        "lib/net35/YamlDotNet.xml",
+        "lib/netstandard1.3/YamlDotNet.dll",
+        "lib/netstandard1.3/YamlDotNet.xml",
+        "lib/portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/YamlDotNet.dll",
+        "lib/portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/YamlDotNet.xml",
+        "yamldotnet.signed.4.2.1.nupkg.sha512",
+        "yamldotnet.signed.nuspec"
+      ]
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.0": [
+      "Amazon.Lambda.AspNetCoreServer >= 2.0.1",
+      "Amazon.Lambda.Tools >= 2.1.1",
       "Microsoft.AspNetCore.All >= 2.0.0",
       "Microsoft.NETCore.App >= 2.0.0"
     ]
@@ -12575,6 +13329,14 @@
             "target": "Package",
             "version": "2.0.0",
             "autoReferenced": true
+          },
+          "Amazon.Lambda.AspNetCoreServer": {
+            "target": "Package",
+            "version": "2.0.1"
+          },
+          "Amazon.Lambda.Tools": {
+            "target": "Package",
+            "version": "2.1.1"
           },
           "Microsoft.AspNetCore.All": {
             "target": "Package",

@@ -1,0 +1,10 @@
+/home/ic17m014/Dropbox/FH/Master_ITS/02/SINT/ey-mann-wo-ist-mein-autoverleih/ws1_restful_autoverleih/obj/Debug/netcoreapp2.0/ws1_restful_autoverleih.csproj.CoreCompileInputs.cache
+/home/ic17m014/Dropbox/FH/Master_ITS/02/SINT/ey-mann-wo-ist-mein-autoverleih/ws1_restful_autoverleih/obj/Debug/netcoreapp2.0/ws1_restful_autoverleih.AssemblyInfoInputs.cache
+/home/ic17m014/Dropbox/FH/Master_ITS/02/SINT/ey-mann-wo-ist-mein-autoverleih/ws1_restful_autoverleih/obj/Debug/netcoreapp2.0/ws1_restful_autoverleih.AssemblyInfo.cs
+/home/ic17m014/Dropbox/FH/Master_ITS/02/SINT/ey-mann-wo-ist-mein-autoverleih/ws1_restful_autoverleih/bin/Debug/netcoreapp2.0/ws1_restful_autoverleih.deps.json
+/home/ic17m014/Dropbox/FH/Master_ITS/02/SINT/ey-mann-wo-ist-mein-autoverleih/ws1_restful_autoverleih/bin/Debug/netcoreapp2.0/ws1_restful_autoverleih.runtimeconfig.json
+/home/ic17m014/Dropbox/FH/Master_ITS/02/SINT/ey-mann-wo-ist-mein-autoverleih/ws1_restful_autoverleih/bin/Debug/netcoreapp2.0/ws1_restful_autoverleih.runtimeconfig.dev.json
+/home/ic17m014/Dropbox/FH/Master_ITS/02/SINT/ey-mann-wo-ist-mein-autoverleih/ws1_restful_autoverleih/bin/Debug/netcoreapp2.0/ws1_restful_autoverleih.dll
+/home/ic17m014/Dropbox/FH/Master_ITS/02/SINT/ey-mann-wo-ist-mein-autoverleih/ws1_restful_autoverleih/bin/Debug/netcoreapp2.0/ws1_restful_autoverleih.pdb
+/home/ic17m014/Dropbox/FH/Master_ITS/02/SINT/ey-mann-wo-ist-mein-autoverleih/ws1_restful_autoverleih/obj/Debug/netcoreapp2.0/ws1_restful_autoverleih.dll
+/home/ic17m014/Dropbox/FH/Master_ITS/02/SINT/ey-mann-wo-ist-mein-autoverleih/ws1_restful_autoverleih/obj/Debug/netcoreapp2.0/ws1_restful_autoverleih.pdb
