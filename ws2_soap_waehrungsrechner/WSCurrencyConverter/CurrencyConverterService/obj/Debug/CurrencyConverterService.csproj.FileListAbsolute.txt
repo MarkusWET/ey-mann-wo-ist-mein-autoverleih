@@ -1,0 +1,7 @@
+c:\users\dave\source\repos\WSCurrencyConverter\CurrencyConverterService\bin\CurrencyConverterService.dll.config
+c:\users\dave\source\repos\WSCurrencyConverter\CurrencyConverterService\bin\CurrencyConverterService.dll
+c:\users\dave\source\repos\WSCurrencyConverter\CurrencyConverterService\bin\CurrencyConverterService.pdb
+c:\users\dave\source\repos\WSCurrencyConverter\CurrencyConverterService\obj\Debug\CurrencyConverterService.csprojResolveAssemblyReference.cache
+c:\users\dave\source\repos\WSCurrencyConverter\CurrencyConverterService\obj\Debug\CurrencyConverterService.csproj.CoreCompileInputs.cache
+c:\users\dave\source\repos\WSCurrencyConverter\CurrencyConverterService\obj\Debug\CurrencyConverterService.dll
+c:\users\dave\source\repos\WSCurrencyConverter\CurrencyConverterService\obj\Debug\CurrencyConverterService.pdb
