@@ -35,19 +35,22 @@ def loan_car():
     error = False
     loan_end_date = "1901-01-01"
     loan_start_date = "1901-01-01"
-
-    car_id = request.args.get("id", default=1, type=int)
-    loan_start_date_raw = request.args.get("start", default='1901-01-01', type=str)
-    loan_end_date_raw = request.args.get("end", default='1901-01-01', type=str)
+    car_id = 1
 
     try:
-        loan_start_date = datetime.strptime(loan_start_date_raw, "%Y-%m-%d")
-    except ValueError as e:
+        car_id = int(request.args.get("id", default=1, type=int))
+    except ValueError:
+        error = True
+        error_msg += "ID must be a number"
+
+    try:
+        loan_start_date = datetime.strptime(request.args.get("start", default='1901-01-01', type=str), "%Y-%m-%d")
+    except ValueError:
         error = True
         error_msg += "Start date does not match the required format of \"YYYY-MM-DD\""
 
     try:
-        loan_end_date = datetime.strptime(loan_end_date_raw, "%Y-%m-%d")
+        loan_end_date = datetime.strptime(request.args.get("end", default='1901-01-01', type=str), "%Y-%m-%d")
     except ValueError:
         error = True
         error_msg += "end date does not match the required format of \"YYYY-MM-DD\""
