@@ -1,7 +1,8 @@
-from flask import render_template, request, make_response
+from flask import render_template, request, make_response, escape
 from functools import wraps
 from datetime import datetime
 from app import app
+from app.data_models import Car, User
 
 
 @app.errorhandler(404)
@@ -30,10 +31,14 @@ def hello_world():
 @app.route("/car/loan")
 @auth_required
 def loan_car():
-    car_id = request.args.get("id", default=1, type=int)
     error_msg = ""
     error = False
+    loan_end_date = "1901-01-01"
+    loan_start_date = "1901-01-01"
+
+    car_id = request.args.get("id", default=1, type=int)
     loan_start_date_raw = request.args.get("start", default='1901-01-01', type=str)
+    loan_end_date_raw = request.args.get("end", default='1901-01-01', type=str)
 
     try:
         loan_start_date = datetime.strptime(loan_start_date_raw, "%Y-%m-%d")
@@ -41,10 +46,8 @@ def loan_car():
         error = True
         error_msg += "Start date does not match the required format of \"YYYY-MM-DD\""
 
-    loan_end_date_raw = request.args.get("end", default='1901-01-01', type=str)
-
     try:
-        loan_end_date = datetime.strptime(loan_end_date_raw, "%Y-%m-%d %H:%M:%S")
+        loan_end_date = datetime.strptime(loan_end_date_raw, "%Y-%m-%d")
     except ValueError:
         error = True
         error_msg += "end date does not match the required format of \"YYYY-MM-DD\""
@@ -52,7 +55,9 @@ def loan_car():
     if error:
         return error_msg
 
-    return "DEBUG: auto {} angefragt von {} bis {}".format(car_id, loan_start_date, loan_end_date)
+    car = Car.query.get(car_id)
+
+    return escape("DEBUG: {} angefragt von {} bis {}".format(car, loan_start_date, loan_end_date))
 
 
 @app.route("/car/return")

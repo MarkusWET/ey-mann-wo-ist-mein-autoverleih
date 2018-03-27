@@ -11,7 +11,7 @@ class User(db.Model):
     pbkdf2_hashed_pw = db.Column(db.String(128))
 
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return '<User: {}>'.format(self.username)
 
 
 class Car(db.Model):
@@ -21,7 +21,7 @@ class Car(db.Model):
     price_per_day = db.Column(db.Float)
 
     def __repr__(self):
-        return '<Car {}>'.format(self.body)
+        return '<Car: {} {}>'.format(self.company, self.model)
 
 
 class LoanHistory(db.Model):
@@ -32,4 +32,5 @@ class LoanHistory(db.Model):
     loaned_to = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
     def __repr__(self):
-        return '<Loan History {}>'.format(self.body)
+        return '<Loan History: {} loaned by User {} from {} to {}>'.format(self.car_id, self.user_id, self.loaned_from,
+                                                                           self.loaned_to)
