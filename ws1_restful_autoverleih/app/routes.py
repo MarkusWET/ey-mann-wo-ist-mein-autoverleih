@@ -1,9 +1,10 @@
 from app import app, db, auth
 from app.data_models.User import User
-from app.data_models.LoanHistory import LoanHistory
+from app.data_models.RentalHistory import RentalHistory
 from app.data_models.Car import Car
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import abort, request, jsonify, g, url_for, escape, Response
+from sqlalchemy import exc
 
 
 @auth.verify_password
@@ -19,10 +20,10 @@ def verify_password(username_or_token, password):
     return True
 
 
-@app.route('/api/users', methods=['POST'])
+@app.route("/api/users", methods=["POST"])
 def new_user():
-    username = request.json.get('username')
-    password = request.json.get('password')
+    username = request.json.get("username")
+    password = request.json.get("password")
     if username is None or password is None:
         abort(400)  # missing arguments
     if User.query.filter_by(username=username).first() is not None:
@@ -32,70 +33,96 @@ def new_user():
     # TODO @markuswet: refactor to implement PBKDF2 with Salt and Iterations
     db.session.add(user)
     db.session.commit()
-    return (jsonify({'username': user.username}), 201,
-            {'Location': url_for('get_user', user_id=user.id, _external=True)})
+    return (jsonify({"username": user.username}), 201,
+            {"Location": url_for("get_user", user_id=user.id, _external=True)})
 
 
-@app.route('/api/users/<user_id>')
+@app.route("/api/users/<user_id>")
 def get_user(user_id):
     user = User.query.get(user_id)
     if not user:
         abort(400)  # TODO @markuswet: is 400 BAD REQUEST really a good Status Code for data not found?
-    return jsonify({'username': user.username})
+    return jsonify({"username": user.username})
 
 
-@app.route('/api/token')
+@app.route("/api/token")
 @auth.login_required
 def get_auth_token():
     token = g.user.generate_auth_token(600)  # TODO @markuswet: Discuss with @mweber if duration is long/short enough
-    return jsonify({'token': token.decode('ascii'), 'duration': 600})
+    return jsonify({"token": token.decode("ascii"), "duration": 600})
 
 
-@app.route('/api/resource')
+@app.route("/api/resource")
 @auth.login_required
 def get_resource():
-    return jsonify({'data': 'Hello, %s!' % g.user.username})
+    return jsonify({"data": "Hello, %s!" % g.user.username})
 
 
-@app.route("/api/car/loan", methods=["POST"])
+@app.route("/api/car/rent", methods=["POST"])
 # @auth.login_required
-def loan_car():
+def rent_car():
     error_msg = ""
     error = False
-    loan_end_date = "1901-01-01"
-    loan_start_date = "1901-01-01"
-    car_id = 1
+    rental_start_date = "1901-01-01"
+    rental_end_date = "1901-01-01"
+    car_id = 0
+    user_id = 0
 
     try:
-        car_id = int(request.json.get("id"))
+        car_id = int(request.json.get("car"))
     except ValueError:
         error = True
-        error_msg += "ID must be a number"
+        error_msg += "Car ID must be a number"
+    try:
+        user_id = int(request.json.get("user"))
+    except ValueError:
+        error = True
+        error_msg += "User ID must be a number"
 
     try:
-        loan_start_date = datetime.strptime(request.json.get("start"), "%Y-%m-%d")
+        rental_start_date = datetime.strptime(request.json.get("start"), "%Y-%m-%d")
     except ValueError:
         error = True
         error_msg += "Start date does not match the required format of \"YYYY-MM-DD\""
 
     try:
-        loan_end_date = datetime.strptime(request.json.get("end"), "%Y-%m-%d")
+        rental_end_date = datetime.strptime(request.json.get("end"), "%Y-%m-%d")
+        rental_end_date = rental_end_date + timedelta(days=1, seconds=-1)
     except ValueError:
         error = True
         error_msg += "end date does not match the required format of \"YYYY-MM-DD\""
 
+    car = Car.query.get(car_id)
+    if car is None:
+        error = True
+        error_msg += "Car with ID {} not found".format(car_id)
+
+    user = User.query.get(user_id)
+    if user is None:
+        error = True
+        error_msg += "User with ID {} not found".format(user)
+
     if error:
         abort(Response(escape(error_msg)))
 
-    car = Car.query.get(car_id)
-    loan_history = db.session.query(LoanHistory). \
-        filter(LoanHistory.car_id == car.id). \
-        filter(LoanHistory.loaned_to <= loan_start_date). \
+    rental_history = db.session.query(RentalHistory). \
+        filter(RentalHistory.car_id == 1, RentalHistory.rented_to >= rental_start_date). \
+        order_by(RentalHistory.rented_to.desc()). \
         first()
 
-    if loan_history is None:
-        duration = loan_end_date - loan_start_date
-        total = car.price_per_day * duration
-        loan = LoanHistory(car_id=car.id, loaned_from=loan_start_date, loaned_to=loan_end_date)
-        db.session.add(loan)
-    # return escape("DEBUG: {} angefragt von {} bis {}".format(car, loan_start_date, loan_end_date))
+    if rental_history is None:
+        duration = rental_end_date - rental_start_date
+        total = car.price_per_day * duration.days
+        rental = RentalHistory(car_id=car.id,
+                               user_id=user.id,
+                               rented_from=rental_start_date,
+                               rented_to=rental_end_date,
+                               total_price=total)
+        db.session.add(rental)
+        try:
+            db.session.commit()
+        except exc.SQLAlchemyError:
+            abort(Response("Query unsuccessful. Changes rolled back", 500))
+
+    else:
+        abort(Response("Car {} already rented in that timeframe.".format(car.id)))
