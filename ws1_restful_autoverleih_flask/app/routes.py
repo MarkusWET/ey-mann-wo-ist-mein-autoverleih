@@ -1,4 +1,5 @@
-from flask import render_template, request
+from flask import render_template, request, make_response
+from functools import wraps
 from datetime import datetime
 from app import app
 
@@ -8,6 +9,17 @@ def page_not_found(e):
     return render_template("error.html")
 
 
+def auth_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if request.authorization and request.authorization.username == "un" and request.authorization.password == "pw":
+            return f(*args, **kwargs)
+
+        return make_response("(401) Unauthorized", 401, {"WWW-Authenticate": 'Basic realm="Login Required"'})
+
+    return decorated
+
+
 @app.route("/")
 @app.route("/index")
 def hello_world():
@@ -15,6 +27,7 @@ def hello_world():
 
 
 @app.route("/car/loan")
+@auth_required
 def loan_car():
     car_id = request.args.get("id", default=1, type=int)
     error_msg = ""
@@ -42,6 +55,7 @@ def loan_car():
 
 
 @app.route("/car/return")
+@auth_required
 def return_car():
     car_id = request.args.get("id", default=1, type=int)
     return "auto {} zurückgegeben".format(car_id)
