@@ -10,6 +10,7 @@ def page_not_found(e):
 
 
 def auth_required(f):
+    # This could also be done via Flask-Login etc.
     @wraps(f)
     def decorated(*args, **kwargs):
         if request.authorization and request.authorization.username == "un" and request.authorization.password == "pw":
