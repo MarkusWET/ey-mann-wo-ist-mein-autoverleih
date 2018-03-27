@@ -1,7 +1,8 @@
 from flask import render_template, request, make_response, escape
+from flask_restful import Resource
 from functools import wraps
 from datetime import datetime
-from app import app
+from app import app, api
 from app.data_models import Car, User
 
 
