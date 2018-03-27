@@ -52,15 +52,11 @@ def loan_car():
     if error:
         return error_msg
 
-    return "auto {} ausgeliehen von {} bis {}".format(car_id, loan_start_date, loan_end_date)
+    return "DEBUG: auto {} angefragt von {} bis {}".format(car_id, loan_start_date, loan_end_date)
 
 
 @app.route("/car/return")
 @auth_required
 def return_car():
     car_id = request.args.get("id", default=1, type=int)
-    return "auto {} zurückgegeben".format(car_id)
-
-#
-# if __name__ == '__main__':
-#     app.run()
+    return "DEBUG: auto {} zurückgegeben".format(car_id)
