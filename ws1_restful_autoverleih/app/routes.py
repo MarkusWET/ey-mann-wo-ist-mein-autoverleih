@@ -88,8 +88,14 @@ def loan_car():
         abort(Response(escape(error_msg)))
 
     car = Car.query.get(car_id)
-    loan_history = LoanHistory.query.filter_by(car_id=car.id, loaned_to=None).first()
+    loan_history = db.session.query(LoanHistory). \
+        filter(LoanHistory.car_id == car.id). \
+        filter(LoanHistory.loaned_to <= loan_start_date). \
+        first()
 
     if loan_history is None:
-        abort(404) # TODO @markuswet: Re-write the Error Message (currently: URL not found)
+        duration = loan_end_date - loan_start_date
+        total = car.price_per_day * duration
+        loan = LoanHistory(car_id=car.id, loaned_from=loan_start_date, loaned_to=loan_end_date)
+        db.session.add(loan)
     # return escape("DEBUG: {} angefragt von {} bis {}".format(car, loan_start_date, loan_end_date))
