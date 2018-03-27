@@ -18,9 +18,17 @@ class Car(db.Model):
     company = db.Column(db.String(140))
     model = db.Column(db.String(140))
     price_per_day = db.Column(db.Float)
-    loaned_from = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    loaned_to = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return '<Car {}>'.format(self.body)
+
+
+class LoanHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    car_id = db.Column(db.Integer, db.ForeignKey('car.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    loaned_from = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    loaned_to = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return '<Loan History {}>'.format(self.body)
