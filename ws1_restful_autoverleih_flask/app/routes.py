@@ -1,10 +1,15 @@
-from flask import Flask, request, render_template
+from flask import render_template, request
 from datetime import datetime
+from app import app
 
-app = Flask(__name__)
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("error.html")
 
 
-@app.route('/')
+@app.route("/")
+@app.route("/index")
 def hello_world():
     return render_template("home.html")
 
@@ -41,6 +46,6 @@ def return_car():
     car_id = request.args.get("id", default=1, type=int)
     return "auto {} zurückgegeben".format(car_id)
 
-
-if __name__ == '__main__':
-    app.run()
+#
+# if __name__ == '__main__':
+#     app.run()
