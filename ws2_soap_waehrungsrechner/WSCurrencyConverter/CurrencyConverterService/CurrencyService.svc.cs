@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.Serialization;
-using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.Text;
-using System.Xml;
+using System.Timers;
 using System.Xml.Linq;
 
 namespace CurrencyConverterService
@@ -20,7 +16,6 @@ namespace CurrencyConverterService
 
         private void SetCurrencyData()
         {
-
             //variable for holding the xml as a string
             string xmlString;
 
@@ -52,6 +47,13 @@ namespace CurrencyConverterService
             this.CurrencyData = currencies; 
         }
 
+        /// <summary>
+        /// Enter amount to be converted to Euro, String format: 3 all caps letters (e.g. "USD")
+        /// Currency Format: floating point number
+        /// </summary>
+        /// <param name="currOut"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
         public decimal ConvertToEur(string currOut, decimal amount)
         {
             if (this.CurrencyData == null) SetCurrencyData();
@@ -64,8 +66,18 @@ namespace CurrencyConverterService
             return 0;
         }
 
+        /// <summary>
+        /// Enter desired input and output currency, String format: 3 all caps letters (e.g. "USD")
+        /// Currency Format: floating point number
+        /// </summary>
+        /// <param name="currIn"></param>
+        /// <param name="currOut"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
         public decimal CrossConvert(string currIn, string currOut, decimal amount)
         {
+            if (this.CurrencyData == null) SetCurrencyData();
+        
             //get intermediate value
             decimal temp = ConvertToEur(currIn, amount);
 
@@ -76,5 +88,7 @@ namespace CurrencyConverterService
 
             return 0;
         }
+
+
     }
 }

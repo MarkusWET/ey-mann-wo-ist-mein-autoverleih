@@ -5,3 +5,10 @@ c:\users\dave\source\repos\WSCurrencyConverter\CurrencyConverterService\obj\Debu
 c:\users\dave\source\repos\WSCurrencyConverter\CurrencyConverterService\obj\Debug\CurrencyConverterService.csproj.CoreCompileInputs.cache
 c:\users\dave\source\repos\WSCurrencyConverter\CurrencyConverterService\obj\Debug\CurrencyConverterService.dll
 c:\users\dave\source\repos\WSCurrencyConverter\CurrencyConverterService\obj\Debug\CurrencyConverterService.pdb
+C:\Users\Dave\GitRepos\ey-mann-wo-ist-mein-autoverleih\ws2_soap_waehrungsrechner\WSCurrencyConverter\CurrencyConverterService\bin\CurrencyConverterService.dll.config
+C:\Users\Dave\GitRepos\ey-mann-wo-ist-mein-autoverleih\ws2_soap_waehrungsrechner\WSCurrencyConverter\CurrencyConverterService\bin\CurrencyConverterService.dll
+C:\Users\Dave\GitRepos\ey-mann-wo-ist-mein-autoverleih\ws2_soap_waehrungsrechner\WSCurrencyConverter\CurrencyConverterService\bin\CurrencyConverterService.pdb
+C:\Users\Dave\GitRepos\ey-mann-wo-ist-mein-autoverleih\ws2_soap_waehrungsrechner\WSCurrencyConverter\CurrencyConverterService\obj\Debug\CurrencyConverterService.csprojResolveAssemblyReference.cache
+C:\Users\Dave\GitRepos\ey-mann-wo-ist-mein-autoverleih\ws2_soap_waehrungsrechner\WSCurrencyConverter\CurrencyConverterService\obj\Debug\CurrencyConverterService.csproj.CoreCompileInputs.cache
+C:\Users\Dave\GitRepos\ey-mann-wo-ist-mein-autoverleih\ws2_soap_waehrungsrechner\WSCurrencyConverter\CurrencyConverterService\obj\Debug\CurrencyConverterService.dll
+C:\Users\Dave\GitRepos\ey-mann-wo-ist-mein-autoverleih\ws2_soap_waehrungsrechner\WSCurrencyConverter\CurrencyConverterService\obj\Debug\CurrencyConverterService.pdb
