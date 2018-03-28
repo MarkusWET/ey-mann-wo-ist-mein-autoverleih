@@ -1,0 +1,10 @@
+language: python
+python:
+  - 3.6
+
+install:
+  - pip install -r ./ws1_restful_autoverleih/requirements.txt
+
+script:
+  - cd ws1_restful_autoverleih
+  - python ./tests/autoverleih_tests.py test
