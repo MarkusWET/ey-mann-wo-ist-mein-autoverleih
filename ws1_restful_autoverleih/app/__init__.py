@@ -17,6 +17,5 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///{}".format(os.path.join(os.pa
 
 # extensions
 db = SQLAlchemy(app)
-
 migrate = Migrate(app, db)
 auth = HTTPBasicAuth()

@@ -48,8 +48,8 @@ def get_user(user_id):
 @app.route("/api/token")
 @auth.login_required
 def get_auth_token():
-    token = g.user.generate_auth_token(600)  # TODO @markuswet: Discuss with @mweber if duration is long/short enough
-    return jsonify({"token": token.decode("ascii"), "duration": 600})
+    token = g.user.generate_auth_token(60000)  # TODO @markuswet: Discuss with @mweber if duration is long/short enough
+    return jsonify({"token": token.decode("ascii"), "duration": 60000})
 
 
 @app.route("/api/resource")
@@ -58,26 +58,14 @@ def get_resource():
     return jsonify({"data": "Hello, %s!" % g.user.username})
 
 
-@app.route("/api/car/rent", methods=["POST"])
-# @auth.login_required
-def rent_car():
+@app.route("/api/car/<car_id>/rent", methods=["PUT"])
+@auth.login_required
+def rent_car(car_id):
     error_msg = ""
     error = False
     rental_start_date = "1901-01-01"
     rental_end_date = "1901-01-01"
-    car_id = 0
-    user_id = 0
-
-    try:
-        car_id = int(request.json.get("car"))
-    except ValueError:
-        error = True
-        error_msg += "Car ID must be a number"
-    try:
-        user_id = int(request.json.get("user"))
-    except ValueError:
-        error = True
-        error_msg += "User ID must be a number"
+    user_id = g.user.id
 
     try:
         rental_start_date = datetime.strptime(request.json.get("start"), "%Y-%m-%d")
@@ -119,10 +107,71 @@ def rent_car():
                                rented_to=rental_end_date,
                                total_price=total)
         db.session.add(rental)
+
+        car.rented = True
+
         try:
             db.session.commit()
         except exc.SQLAlchemyError:
             abort(Response("Query unsuccessful. Changes rolled back", 500))
 
     else:
-        abort(Response("Car {} already rented in that timeframe.".format(car.id)))
+        abort(Response("Car {} already rented in that timeframe.".format(car.id), 409))
+
+
+@app.route("/api/car/<car_id>/return", methods=["PUT"])
+@auth.login_required
+def return_car(car_id):
+    error_msg = ""
+    error = False
+    car_id = 0
+    user_id = 0
+
+    try:
+        car_id = int(request.json.get("car"))
+    except ValueError:
+        error = True
+        error_msg += "Car ID must be a number"
+    try:
+        user_id = int(request.json.get("user"))
+    except ValueError:
+        error = True
+        error_msg += "User ID must be a number"
+
+    rental = db.session.query(RentalHistory). \
+        filter(RentalHistory.car_id == car_id, RentalHistory.user_id == user_id). \
+        order_by(RentalHistory.rented_to.desc()). \
+        first()
+    rental.returned = True
+
+    car = db.session.query(Car). \
+        filter(Car.id == car_id). \
+        first()
+    car.rented = False
+
+    db.session.commit()
+
+
+@app.route("/api/car/available")
+@auth.login_required
+def available_cars():
+    pass
+
+
+@app.route("/api/user/<user_id>/rented")
+@auth.login_required
+def rented_cars(user_id):
+    uid = 0
+
+    try:
+        uid = int(user_id)
+    except ValueError:
+        abort(400)
+
+    if uid != g.user.id:
+        abort(Response("User ID does not match Token User ID!", 400))
+    user_cars = db.session.query(RentalHistory). \
+        filter(RentalHistory.user_id == uid, RentalHistory.returned.isnot(True)). \
+        all()
+
+    return jsonify(rentals=[e.serialize() for e in user_cars])

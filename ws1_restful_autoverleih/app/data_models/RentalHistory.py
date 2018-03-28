@@ -8,10 +8,23 @@ class RentalHistory(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     rented_from = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     rented_to = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    total_price = db.Column(db.Float)
+    total_price = db.Column(db.Float, default=0.0)
+    returned = db.Column(db.Boolean, default=False)
+
+    def serialize(self):
+        """Custom Serializer"""
+        return {
+            "id": self.id,
+            "car_id": self.car_id,
+            "user_id": self.user_id,
+            "rented_from": self.rented_from,
+            "rented_to": self.rented_to,
+            "total_price": self.total_price,
+            "returned": self.returned,
+        }
 
     def __repr__(self):
-        return '<Loan History: {} rented by User {} from {} to {}>'.format(self.car_id,
-                                                                           self.user_id,
-                                                                           self.rented_from,
-                                                                           self.rented_to)
+        return '<Rental History: {} rented by User {} from {} to {}>'.format(self.car_id,
+                                                                             self.user_id,
+                                                                             self.rented_from,
+                                                                             self.rented_to)
