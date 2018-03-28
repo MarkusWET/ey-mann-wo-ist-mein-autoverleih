@@ -16,7 +16,12 @@ def init_db():
     db.session.commit()
 
     # Create Demo Car
-    demo_car = Car(company="Ford", model="Mustang", price_per_day=150.0)
+    demo_car = Car(company="Ford",
+                   model="Mustang",
+                   price_per_day=150.0,
+                   gps_lat=48.213024,
+                   gps_long=16.384843,
+                   color="#0088CC")
     db.session.add(demo_car)
     db.session.commit()
 
