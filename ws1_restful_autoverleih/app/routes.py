@@ -61,44 +61,38 @@ def get_resource():
 @app.route("/api/car/<car_id>/rent", methods=["PUT"])
 @auth.login_required
 def rent_car(car_id):
-    error_msg = ""
-    error = False
+    """Rent car with id car_id for the dates (YYYY-MM-DD) defined in the body with start and end"""
     rental_start_date = "1901-01-01"
     rental_end_date = "1901-01-01"
-    user_id = g.user.id
 
+    # Try to find user
+    user = User.query.get(g.user.id)
+    if user is None:
+        abort(Response("Invalid user", 400))
+
+    # Validate Dates
     try:
         rental_start_date = datetime.strptime(request.json.get("start"), "%Y-%m-%d")
     except ValueError:
-        error = True
-        error_msg += "Start date does not match the required format of \"YYYY-MM-DD\""
+        abort(Response("Start date does not match the required format of \"YYYY-MM-DD\"\n"), 400)
 
     try:
         rental_end_date = datetime.strptime(request.json.get("end"), "%Y-%m-%d")
         rental_end_date = rental_end_date + timedelta(days=1, seconds=-1)
     except ValueError:
-        error = True
-        error_msg += "end date does not match the required format of \"YYYY-MM-DD\""
+        abort(Response("End date does not match the required format of \"YYYY-MM-DD\"\n"), 400)
 
+    # Try to find car
     car = Car.query.get(car_id)
     if car is None:
-        error = True
-        error_msg += "Car with ID {} not found".format(car_id)
+        abort(Response("Car with ID {} not found.\n".format(car)), 404)
 
-    user = User.query.get(user_id)
-    if user is None:
-        error = True
-        error_msg += "User with ID {} not found".format(user)
-
-    if error:
-        abort(Response(escape(error_msg)))
-
-    rental_history = db.session.query(RentalHistory). \
+    rental = db.session.query(RentalHistory). \
         filter(RentalHistory.car_id == 1, RentalHistory.rented_to >= rental_start_date). \
         order_by(RentalHistory.rented_to.desc()). \
         first()
 
-    if rental_history is None:
+    if rental is None:
         duration = rental_end_date - rental_start_date
         total = car.price_per_day * duration.days
         rental = RentalHistory(car_id=car.id,
@@ -113,10 +107,11 @@ def rent_car(car_id):
         try:
             db.session.commit()
         except exc.SQLAlchemyError:
-            abort(Response("Query unsuccessful. Changes rolled back", 500))
+            abort(Response("Query unsuccessful. Changes rolled back.\n", 500))
 
+        return jsonify(rental_entry=rental.serialize())
     else:
-        abort(Response("Car {} already rented in that timeframe.".format(car.id), 409))
+        abort(Response("Car {} already rented in that timeframe.\n".format(car.id), 409))
 
 
 @app.route("/api/car/<car_id>/return", methods=["PUT"])
