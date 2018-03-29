@@ -1,13 +1,10 @@
 matrix:
-    include:
-        - language: python
-        python:
-            - 3.6
-
-        install:
-            - pip install -r ./ws1_restful_autoverleih/requirements.txt
-
-        before_script:
-            - cd ws1_restful_autoverleih
-        script:
-            - python ./tests/autoverleih_tests.py test
+  include:
+    - language: python
+      python:3.6
+      install:
+        - pip install -r ./ws1_restful_autoverleih/requirements.txt
+      before_script:
+        - cd ws1_restful_autoverleih
+      script:
+        - python ./tests/autoverleih_tests.py test
