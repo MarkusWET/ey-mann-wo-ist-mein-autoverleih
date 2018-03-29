@@ -9,7 +9,6 @@ class RentalHistory(db.Model):
     rented_from = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     rented_to = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     total_price = db.Column(db.Float, default=0.0)
-    returned = db.Column(db.Boolean, default=False)
 
     def serialize(self):
         """Custom Serializer"""
@@ -19,8 +18,7 @@ class RentalHistory(db.Model):
             "user_id": self.user_id,
             "rented_from": self.rented_from,
             "rented_to": self.rented_to,
-            "total_price": self.total_price,
-            "returned": self.returned,
+            "total_price": self.total_price
         }
 
     def __repr__(self):

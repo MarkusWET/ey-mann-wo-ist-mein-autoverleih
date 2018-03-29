@@ -10,7 +10,6 @@ class Car(db.Model):
     gps_lat = db.Column(db.Float, default=0.0)
     gps_long = db.Column(db.Float, default=0.0)
     color = db.Column(db.String(7))
-    rented = db.Column(db.Boolean, default=False)
 
     def serialize(self):
         return {
@@ -20,8 +19,7 @@ class Car(db.Model):
             "price_per_day": self.price_per_day,
             "gps_lat": self.gps_lat,
             "gps_long": self.gps_long,
-            "color": self.color,
-            "rented": self.rented
+            "color": self.color
         }
 
     def __repr__(self):

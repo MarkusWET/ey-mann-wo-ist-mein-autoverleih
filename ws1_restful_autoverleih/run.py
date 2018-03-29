@@ -15,14 +15,31 @@ def init_db():
     db.session.add(demo_user)
     db.session.commit()
 
-    # Create Demo Car
-    demo_car = Car(company="Ford",
-                   model="Mustang",
-                   price_per_day=150.0,
-                   gps_lat=48.213024,
-                   gps_long=16.384843,
-                   color="#0088CC")
-    db.session.add(demo_car)
+    # Create Demo Cars
+    demo_mustang = Car(company="Ford",
+                       model="Mustang",
+                       price_per_day=150.0,
+                       gps_lat=48.213024,
+                       gps_long=16.384843,
+                       color="#0088CC")
+    db.session.add(demo_mustang)
+
+    demo_lada = Car(company="Lada",
+                    model="Taiga",
+                    price_per_day=10.0,
+                    gps_lat=48.213024,
+                    gps_long=16.384843,
+                    color="#50191F")
+    db.session.add(demo_lada)
+
+    demo_enzo = Car(company="Ferrari",
+                    model="Enzo",
+                    price_per_day=6000.0,
+                    gps_lat=48.213024,
+                    gps_long=16.384843,
+                    color="#FF2800")  # the real Ferrari red <3
+    db.session.add(demo_enzo)
+
     db.session.commit()
 
     # Create Demo Rental
@@ -30,7 +47,21 @@ def init_db():
                                 user_id=1,
                                 rented_from=datetime.today(),
                                 rented_to=datetime.today() + timedelta(days=10),
-                                total_price=demo_car.price_per_day * 10)
+                                total_price=demo_mustang.price_per_day * 10)
+    db.session.add(demo_rental)
+
+    demo_rental = RentalHistory(car_id=2,
+                                user_id=1,
+                                rented_from=datetime.today() - timedelta(days=15),
+                                rented_to=datetime.today() - timedelta(days=1),
+                                total_price=demo_lada.price_per_day * 10)
+    db.session.add(demo_rental)
+
+    demo_rental = RentalHistory(car_id=3,
+                                user_id=1,
+                                rented_from=datetime.today() + timedelta(days=10),
+                                rented_to=datetime.today() + timedelta(days=375),
+                                total_price=demo_enzo.price_per_day * 365)
     db.session.add(demo_rental)
     db.session.commit()
 

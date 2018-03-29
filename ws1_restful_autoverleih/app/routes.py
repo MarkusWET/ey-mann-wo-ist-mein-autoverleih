@@ -4,7 +4,7 @@ from app.data_models.RentalHistory import RentalHistory
 from app.data_models.Car import Car
 from datetime import datetime, timedelta
 from flask import abort, request, jsonify, g, url_for, escape, Response
-from sqlalchemy import exc
+from sqlalchemy import exc, exists, and_
 
 
 @auth.verify_password
@@ -50,12 +50,6 @@ def get_user(user_id):
 def get_auth_token():
     token = g.user.generate_auth_token(60000)  # TODO @markuswet: Discuss with @mweber if duration is long/short enough
     return jsonify({"token": token.decode("ascii"), "duration": 60000})
-
-
-@app.route("/api/resource")
-@auth.login_required
-def get_resource():
-    return jsonify({"data": "Hello, %s!" % g.user.username})
 
 
 @app.route("/api/car/<car_id>/rent", methods=["PUT"])
@@ -147,21 +141,63 @@ def return_car(car_id):
     db.session.commit()
 
 
-@app.route("/api/car/available")
+@app.route("/api/car/available", methods=["PUT"])
 @auth.login_required
-def available_cars():
+def get_available_cars():
+    rental_start_date = "1901-01-01"
+    rental_end_date = "1901-01-01"
+
+    # Validate Date
+    try:
+        rental_start_date = datetime.strptime(request.json.get("start"), "%Y-%m-%d")
+    except ValueError:
+        abort(Response("Start date does not match the required format of \"YYYY-MM-DD\"\n"), 400)
+
+    try:
+        rental_end_date = datetime.strptime(request.json.get("end"), "%Y-%m-%d")
+        rental_end_date = rental_end_date + timedelta(days=1, seconds=-1)
+    except ValueError:
+        abort(Response("End date does not match the required format of \"YYYY-MM-DD\"\n"), 400)
+
+    # Rental History Logic
+    #  -- powered by: way smarter brains @ StackOverflow:
+    #  -- https://stackoverflow.com/questions/6111263/sql-scheduling-select-all-rooms-available-for-given-date-range/6111388#6111388
+    # Select * From Car c
+    # where not exists
+    #     (Select * From RentalHistory
+    #     Where car_id = c.id
+    #         And RentalHistory.rented_from < rental_end_date
+    #         And RentalHistory.rented_to > rental_start_date)
+
+    # Get all car_ids that are rented in the timeframe
+    rentals_subquery = db.session.query(RentalHistory.car_id). \
+        filter(RentalHistory.rented_from < rental_end_date, RentalHistory.rented_to > rental_start_date). \
+        subquery()
+
+    # get all cars that are not in the rented car_ids
     available = db.session.query(Car). \
-        filter(Car.rented.isnot(True)). \
+        filter(~Car.id.in_(rentals_subquery)). \
         all()
-    if available is None:
+
+    if len(available) < 1:
         abort(Response("No cars available!", 404))
     else:
         return jsonify(available=[e.serialize() for e in available])
 
 
+@app.route("/api/car/all")
+def get_all_cars():
+    all_cars = db.session.query(Car). \
+        all()
+    if all_cars is None:
+        abort(Response("No cars found!", 500))
+    else:
+        return jsonify(available=[e.serialize() for e in all_cars])
+
+
 @app.route("/api/user/<user_id>/rented")
 @auth.login_required
-def rented_cars(user_id):
+def get_rented_cars_of_user(user_id):
     uid = 0
 
     try:
@@ -171,8 +207,8 @@ def rented_cars(user_id):
 
     if uid != g.user.id:
         abort(Response("User ID does not match Token User ID!", 400))
-    user_cars = db.session.query(RentalHistory). \
+    rented_cars = db.session.query(RentalHistory). \
         filter(RentalHistory.user_id == uid, RentalHistory.returned.isnot(True)). \
         all()
 
-    return jsonify(rentals=[e.serialize() for e in user_cars])
+    return jsonify(rentals=[e.serialize() for e in rented_cars])
