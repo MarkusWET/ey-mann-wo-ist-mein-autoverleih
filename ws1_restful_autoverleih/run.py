@@ -47,21 +47,24 @@ def init_db():
                                 user_id=1,
                                 rented_from=datetime.today(),
                                 rented_to=datetime.today() + timedelta(days=10),
-                                total_price=demo_mustang.price_per_day * 10)
+                                total_price=demo_mustang.price_per_day * 10,
+                                returned=False)
     db.session.add(demo_rental)
 
     demo_rental = RentalHistory(car_id=2,
                                 user_id=1,
                                 rented_from=datetime.today() - timedelta(days=15),
                                 rented_to=datetime.today() - timedelta(days=1),
-                                total_price=demo_lada.price_per_day * 10)
+                                total_price=demo_lada.price_per_day * 10,
+                                returned=False)
     db.session.add(demo_rental)
 
     demo_rental = RentalHistory(car_id=3,
                                 user_id=1,
                                 rented_from=datetime.today() + timedelta(days=10),
                                 rented_to=datetime.today() + timedelta(days=375),
-                                total_price=demo_enzo.price_per_day * 365)
+                                total_price=demo_enzo.price_per_day * 365,
+                                returned=False)
     db.session.add(demo_rental)
     db.session.commit()
 

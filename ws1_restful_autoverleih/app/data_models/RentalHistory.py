@@ -9,6 +9,7 @@ class RentalHistory(db.Model):
     rented_from = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     rented_to = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     total_price = db.Column(db.Float, default=0.0)
+    returned = db.Column(db.Boolean, default=False)
 
     def serialize(self):
         """Custom Serializer"""

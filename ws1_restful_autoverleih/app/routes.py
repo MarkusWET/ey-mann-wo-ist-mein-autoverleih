@@ -32,7 +32,12 @@ def new_user():
     user.hash_password(password)
     # TODO @markuswet: refactor to implement PBKDF2 with Salt and Iterations
     db.session.add(user)
-    db.session.commit()
+
+    try:
+        db.session.commit()
+    except exc.SQLAlchemyError:
+        abort(Response("Query unsuccessful. Changes rolled back.\n", 500))
+
     return (jsonify({"username": user.username}), 201,
             {"Location": url_for("get_user", user_id=user.id, _external=True)})
 
@@ -68,18 +73,18 @@ def rent_car(car_id):
     try:
         rental_start_date = datetime.strptime(request.json.get("start"), "%Y-%m-%d")
     except ValueError:
-        abort(Response("Start date does not match the required format of \"YYYY-MM-DD\"\n"), 400)
+        abort(Response("Start date does not match the required format of \"YYYY-MM-DD\"\n", 400))
 
     try:
         rental_end_date = datetime.strptime(request.json.get("end"), "%Y-%m-%d")
         rental_end_date = rental_end_date + timedelta(days=1, seconds=-1)
     except ValueError:
-        abort(Response("End date does not match the required format of \"YYYY-MM-DD\"\n"), 400)
+        abort(Response("End date does not match the required format of \"YYYY-MM-DD\"\n", 400))
 
     # Try to find car
     car = Car.query.get(car_id)
     if car is None:
-        abort(Response("Car with ID {} not found.\n".format(car)), 404)
+        abort(Response("Car with ID {} not found.\n".format(car), 404))
 
     rental = db.session.query(RentalHistory). \
         filter(RentalHistory.car_id == 1, RentalHistory.rented_to >= rental_start_date). \
@@ -111,34 +116,38 @@ def rent_car(car_id):
 @app.route("/api/car/<car_id>/return", methods=["PUT"])
 @auth.login_required
 def return_car(car_id):
-    error_msg = ""
-    error = False
-    car_id = 0
-    user_id = 0
+    # TODO @markuswet (optional): add column return_date and calculate the difference between booked return and actual return as late fee
 
     try:
-        car_id = int(request.json.get("car"))
+        car_id = int(car_id)
     except ValueError:
-        error = True
-        error_msg += "Car ID must be a number"
-    try:
-        user_id = int(request.json.get("user"))
-    except ValueError:
-        error = True
-        error_msg += "User ID must be a number"
+        abort(Response("Car ID must be a number\n", 400))
+
+    # Try to find car
+    car = Car.query.get(car_id)
+    if car is None:
+        abort(Response("Car with ID {} not found.\n".format(car), 404))
+
+    rental_query = db.session.query(RentalHistory). \
+        filter(RentalHistory.car_id == car_id, RentalHistory.user_id == g.user.id, RentalHistory.returned.isnot(True))
 
     rental = db.session.query(RentalHistory). \
-        filter(RentalHistory.car_id == car_id, RentalHistory.user_id == user_id). \
-        order_by(RentalHistory.rented_to.desc()). \
+        filter(RentalHistory.car_id == car_id,
+               RentalHistory.user_id == g.user.id,
+               RentalHistory.returned.isnot(True)). \
         first()
+
+    if rental is None:
+        abort(Response("No valid rental found to return.\n", 400))
+
     rental.returned = True
 
-    car = db.session.query(Car). \
-        filter(Car.id == car_id). \
-        first()
-    car.rented = False
+    try:
+        db.session.commit()
+    except exc.SQLAlchemyError:
+        abort(Response("Query unsuccessful. Changes rolled back.\n", 500))
 
-    db.session.commit()
+    return Response("Car with ID {} returned successfully.".format(car_id), 200)
 
 
 @app.route("/api/car/available", methods=["PUT"])
@@ -151,13 +160,13 @@ def get_available_cars():
     try:
         rental_start_date = datetime.strptime(request.json.get("start"), "%Y-%m-%d")
     except ValueError:
-        abort(Response("Start date does not match the required format of \"YYYY-MM-DD\"\n"), 400)
+        abort(Response("Start date does not match the required format of \"YYYY-MM-DD\"\n", 400))
 
     try:
         rental_end_date = datetime.strptime(request.json.get("end"), "%Y-%m-%d")
         rental_end_date = rental_end_date + timedelta(days=1, seconds=-1)
     except ValueError:
-        abort(Response("End date does not match the required format of \"YYYY-MM-DD\"\n"), 400)
+        abort(Response("End date does not match the required format of \"YYYY-MM-DD\"\n", 400))
 
     # Rental History Logic
     #  -- powered by: way smarter brains @ StackOverflow:
