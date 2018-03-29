@@ -1,10 +1,12 @@
 matrix:
   include:
     - language: python
-      python:3.6
-      install:
-        - pip install -r ./ws1_restful_autoverleih/requirements.txt
+      python: 3.6
       before_script:
         - cd ws1_restful_autoverleih
+      install:
+        - pip install -r .requirements.txt
       script:
         - python ./tests/autoverleih_tests.py test
+    - language: csharp
+      solution: .ws2_soap_waehrungsrechner/WSCurrencyConverter/WSCurrencyConverter.sln
