@@ -114,15 +114,12 @@ curl -u $JWT -i -X GET http://127.0.0.1:5000/api/car/all
 
 **Request**
 ```shell
-curl -u test_user:test_pass -i -X GET http://127.0.0.1:5000/api/token
+curl -u $JWT -i -X GET http://127.0.0.1:5000/api/user/<user_id>/rented
 ```
 
 **Response**
-```json
-{
-  "duration": 600,
-  "token": "eyJhbGciOiJIUzI1NiIsImV4cCI6MTM4NTY2OTY1NSwiaWF0IjoxMzg1NjY5MDU1fQ.eyJpZCI6MX0.XbOEFJkhjHJ5uRINh2JA1BPzXjSohKYDRT472wGOvjc"
-}
+```
+TODO
 ```
 
 ### Rent car - `GET /api/car/<car_id>/rent`
@@ -130,13 +127,15 @@ curl -u test_user:test_pass -i -X GET http://127.0.0.1:5000/api/token
 
 **Request**
 
-```shell
-curl -u test_user:test_pass -i -X GET http://127.0.0.1:5000/api/token
+```shellcurl -u $JWT:x \
+-i -X PUT -H "Content-Type: application/json" \
+-d '{"start":"2018-03-12","end":"2018-09-15"}' \
+http://127.0.0.1:5000/api/car/2/rent  
 ```
 
 **Response**
 ```
-XXX
+Car 2 rented successfully.
 ```
 
 ### Return car - `GET /api/car/<car_id>/return`

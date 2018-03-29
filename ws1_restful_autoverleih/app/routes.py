@@ -36,6 +36,7 @@ def new_user():
     try:
         db.session.commit()
     except exc.SQLAlchemyError:
+        db.session.rollback()
         abort(Response("Query unsuccessful. Changes rolled back.\n", 500))
 
     return (jsonify({"username": user.username}), 201,
@@ -64,6 +65,11 @@ def rent_car(car_id):
     rental_start_date = "1901-01-01"
     rental_end_date = "1901-01-01"
 
+    try:
+        car_id = int(car_id)
+    except ValueError:
+        abort(Response("Car ID must be a number\n", 400))
+
     # Try to find user
     user = User.query.get(g.user.id)
     if user is None:
@@ -86,31 +92,38 @@ def rent_car(car_id):
     if car is None:
         abort(Response("Car with ID {} not found.\n".format(car), 404))
 
-    rental = db.session.query(RentalHistory). \
-        filter(RentalHistory.car_id == 1, RentalHistory.rented_to >= rental_start_date). \
-        order_by(RentalHistory.rented_to.desc()). \
-        first()
+    # Get all car_ids that are rented in the timeframe
+    rentals_subquery = db.session.query(RentalHistory.car_id). \
+        filter(RentalHistory.rented_from < rental_end_date,
+               RentalHistory.rented_to > rental_start_date,
+               RentalHistory.returned.isnot(True)). \
+        subquery()
 
-    if rental is None:
+    # get all cars that are not in the rented car_ids
+    available_cars = db.session.query(Car). \
+        filter(~Car.id.in_(rentals_subquery)). \
+        all()
+
+    if car not in available_cars:
+        abort(Response("Car {} not available during the defined timeframe!".format(car.id), 409))
+    else:
         duration = rental_end_date - rental_start_date
         total = car.price_per_day * duration.days
         rental = RentalHistory(car_id=car.id,
                                user_id=user.id,
                                rented_from=rental_start_date,
                                rented_to=rental_end_date,
-                               total_price=total)
+                               total_price=total,
+                               returned=False)
         db.session.add(rental)
-
-        car.rented = True
 
         try:
             db.session.commit()
         except exc.SQLAlchemyError:
+            db.session.rollback()
             abort(Response("Query unsuccessful. Changes rolled back.\n", 500))
 
-        return jsonify(rental_entry=rental.serialize())
-    else:
-        abort(Response("Car {} already rented in that timeframe.\n".format(car.id), 409))
+        return Response("Car {} rented successfully.\n".format(car.id), 200)
 
 
 @app.route("/api/car/<car_id>/return", methods=["PUT"])
@@ -128,9 +141,6 @@ def return_car(car_id):
     if car is None:
         abort(Response("Car with ID {} not found.\n".format(car), 404))
 
-    rental_query = db.session.query(RentalHistory). \
-        filter(RentalHistory.car_id == car_id, RentalHistory.user_id == g.user.id, RentalHistory.returned.isnot(True))
-
     rental = db.session.query(RentalHistory). \
         filter(RentalHistory.car_id == car_id,
                RentalHistory.user_id == g.user.id,
@@ -145,6 +155,7 @@ def return_car(car_id):
     try:
         db.session.commit()
     except exc.SQLAlchemyError:
+        db.session.rollback()
         abort(Response("Query unsuccessful. Changes rolled back.\n", 500))
 
     return Response("Car with ID {} returned successfully.".format(car_id), 200)
