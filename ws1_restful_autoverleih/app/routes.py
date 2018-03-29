@@ -201,8 +201,15 @@ def get_available_cars():
 
     if len(available) < 1:
         abort(Response("No cars available!", 404))
-    else:
-        return jsonify(available=[e.serialize() for e in available])
+
+    # TODO @markuswet: Re-calculate prices in target currency
+    target_currency = "EUR"
+    exchange_rate = 1.0
+
+    if target_currency != "EUR":
+        for car in available:
+            car.price_per_day = car.price_per_day * exchange_rate
+    return jsonify(available=[e.serialize() for e in available])
 
 
 @app.route("/api/car/all")
@@ -211,8 +218,15 @@ def get_all_cars():
         all()
     if all_cars is None:
         abort(Response("No cars found!", 500))
-    else:
-        return jsonify(available=[e.serialize() for e in all_cars])
+
+    # TODO @markuswet: Re-calculate prices in target currency
+    target_currency = "EUR"
+    exchange_rate = 1.0
+
+    if target_currency != "EUR":
+        for car in all_cars:
+            car.price_per_day = car.price_per_day * exchange_rate
+    return jsonify(available=[e.serialize() for e in all_cars])
 
 
 @app.route("/api/user/<user_id>/rented")
@@ -238,5 +252,13 @@ def get_rented_cars_of_user(user_id):
         all()
     if len(rented_cars) < 1:
         abort(Response("No rented cars for User {} found".format(uid), 200))
+
+    # TODO @markuswet: Re-calculate prices in target currency
+    target_currency = "EUR"
+    exchange_rate = 1.0
+
+    if target_currency != "EUR":
+        for car in rented_cars:
+            car.price_per_day = car.price_per_day * exchange_rate
 
     return jsonify(rentals=[e.serialize() for e in rented_cars])
