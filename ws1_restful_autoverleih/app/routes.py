@@ -150,7 +150,13 @@ def return_car(car_id):
 @app.route("/api/car/available")
 @auth.login_required
 def available_cars():
-    pass
+    available = db.session.query(Car). \
+        filter(Car.rented.isnot(True)). \
+        all()
+    if available is None:
+        abort(Response("No cars available!", 404))
+    else:
+        return jsonify(available=[e.serialize() for e in available])
 
 
 @app.route("/api/user/<user_id>/rented")
