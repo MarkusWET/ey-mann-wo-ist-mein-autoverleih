@@ -114,12 +114,25 @@ curl -u $JWT -i -X GET http://127.0.0.1:5000/api/car/all
 
 **Request**
 ```shell
-curl -u $JWT -i -X GET http://127.0.0.1:5000/api/user/<user_id>/rented
+curl -u $JWT:x \
+-i -X GET -H "Content-Type: application/json" \
+http://127.0.0.1:5000/api/user/1/rented
 ```
 
 **Response**
-```
-TODO
+```json
+{
+  "rentals": [
+    {
+      "car_id": 1, 
+      "id": 13, 
+      "rented_from": "Mon, 12 Mar 2012 00:00:00 GMT", 
+      "rented_to": "Sat, 15 Sep 2012 23:59:59 GMT", 
+      "total_price": 28050.0, 
+      "user_id": 1
+    }
+  ]
+}
 ```
 
 ### Rent car - `GET /api/car/<car_id>/rent`

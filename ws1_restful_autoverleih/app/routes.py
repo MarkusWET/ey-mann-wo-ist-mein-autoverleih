@@ -223,12 +223,20 @@ def get_rented_cars_of_user(user_id):
     try:
         uid = int(user_id)
     except ValueError:
-        abort(400)
+        abort(Response("User ID must be a number\n", 400))
 
     if uid != g.user.id:
         abort(Response("User ID does not match Token User ID!", 400))
+
+    # Try to find user
+    user = User.query.get(g.user.id)
+    if user is None:
+        abort(Response("Invalid user", 400))
+
     rented_cars = db.session.query(RentalHistory). \
         filter(RentalHistory.user_id == uid, RentalHistory.returned.isnot(True)). \
         all()
+    if len(rented_cars) < 1:
+        abort(Response("No rented cars for User {} found".format(uid), 200))
 
     return jsonify(rentals=[e.serialize() for e in rented_cars])
