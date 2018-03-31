@@ -5,13 +5,16 @@ using System.Linq;
 using System.Net;
 using System.Timers;
 using System.Xml.Linq;
+using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CurrencyConverterService
 {
-    // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "CurrencyService" in code, svc and config file together.
-    // NOTE: In order to launch WCF Test Client for testing this service, please select CurrencyService.svc or CurrencyService.svc.cs at the Solution Explorer and start debugging.
     public class CurrencyService : ICurrencyService
     {
+        string hashedKey = sha256("CorrectHorseBatteryStaple");
+
         public List<Currency> CurrencyData { get; set; }
 
         private void SetCurrencyData()
@@ -44,46 +47,95 @@ namespace CurrencyConverterService
                 })
                 .ToList();
 
-            this.CurrencyData = currencies; 
+            this.CurrencyData = currencies;
+
+            //Adding EUR with rate 1, in case convertion is used Euro to Euro
+            currencies.Add(new Currency {Name = "EUR", Rate = 1m });
+        }
+
+        private decimal ConvertToEur(string currIn, string amount)
+        {
+            try
+            {
+                decimal amountParsed = ParseDecimal(amount);
+
+                if (this.CurrencyData == null)
+                    SetCurrencyData();
+
+                foreach (var item in CurrencyData)
+                {
+                    if (item.Name.Equals(currIn))
+                        return amountParsed / item.Rate;
+                }
+
+                return -1;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
+        }
+
+        private static decimal ParseDecimal(string strIn)
+        {
+            decimal decOut;
+            Decimal.TryParse(strIn, NumberStyles.AllowDecimalPoint, new CultureInfo("en-EN"), out decOut);
+            return decOut;
         }
 
         /// <summary>
-        /// Enter amount to be converted to Euro, String format: 3 all caps letters (e.g. "USD")
-        /// Currency Format: floating point number
+        /// taken from: https://stackoverflow.com/questions/12416249/hashing-a-string-with-sha256
         /// </summary>
-        /// <param name="currOut"></param>
-        /// <param name="amount"></param>
+        /// <param name="randomString"></param>
         /// <returns></returns>
-        public decimal ConvertToEur(string currOut, decimal amount)
+        static string sha256(string randomString)
         {
-            if (this.CurrencyData == null) SetCurrencyData();
-
-            foreach (var item in CurrencyData)
+            var crypt = new SHA256Managed();
+            string hash = String.Empty;
+            byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(randomString));
+            foreach (byte theByte in crypto)
             {
-                if (item.Name.Equals(currOut)) return amount / item.Rate;
+                hash += theByte.ToString("x2");
+            }
+            return hash;
+        }
+
+        public decimal ConvertToEur(string currIn, string amount, string auth)
+        {
+            if (!hashedKey.Equals(auth))
+                return -1;
+
+            currIn = currIn.ToUpper();
+
+
+            return ConvertToEur(currIn, amount);
+        }
+
+        public decimal CrossConvert(string currIn, string currOut, string amount, string auth)
+        {
+            if (!hashedKey.Equals(auth))
+                return -1;
+
+            currIn = currIn.ToUpper();
+            currOut = currOut.ToUpper();
+
+            Decimal temp;
+
+            //get intermediate value
+            if (currIn.Equals("EUR"))
+            {
+                temp = ParseDecimal(amount);
+                SetCurrencyData();
+            }
+            else
+            {
+                temp = ConvertToEur(currIn, amount);
             }
 
-            return 0;
-        }
-
-        /// <summary>
-        /// Enter desired input and output currency, String format: 3 all caps letters (e.g. "USD")
-        /// Currency Format: floating point number
-        /// </summary>
-        /// <param name="currIn"></param>
-        /// <param name="currOut"></param>
-        /// <param name="amount"></param>
-        /// <returns></returns>
-        public decimal CrossConvert(string currIn, string currOut, decimal amount)
-        {
-            if (this.CurrencyData == null) SetCurrencyData();
-        
-            //get intermediate value
-            decimal temp = ConvertToEur(currIn, amount);
-
             foreach (var item in CurrencyData)
             {
-                if (item.Name == currOut) return temp * item.Rate;
+                if (item.Name == currOut)
+                    return temp * item.Rate;
             }
 
             return 0;
