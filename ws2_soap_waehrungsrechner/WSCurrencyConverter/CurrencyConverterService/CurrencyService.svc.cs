@@ -5,11 +5,10 @@ using System.Linq;
 using System.Net;
 using System.Timers;
 using System.Xml.Linq;
+using System.Globalization;
 
 namespace CurrencyConverterService
 {
-    // NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "CurrencyService" in code, svc and config file together.
-    // NOTE: In order to launch WCF Test Client for testing this service, please select CurrencyService.svc or CurrencyService.svc.cs at the Solution Explorer and start debugging.
     public class CurrencyService : ICurrencyService
     {
         public List<Currency> CurrencyData { get; set; }
@@ -44,27 +43,55 @@ namespace CurrencyConverterService
                 })
                 .ToList();
 
-            this.CurrencyData = currencies; 
+            this.CurrencyData = currencies;
         }
+
+
+        private decimal ConvertToEur(string currOut, string amount)
+        {
+            try
+            {
+                decimal amountParsed = 0m;
+                Decimal.TryParse(amount, NumberStyles.AllowDecimalPoint, new CultureInfo("en-EN"), out amountParsed);
+
+                if (this.CurrencyData == null)
+                    SetCurrencyData();
+
+                foreach (var item in CurrencyData)
+                {
+                    if (item.Name.Equals(currOut))
+                        return amountParsed / item.Rate;
+                }
+
+                return -1;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
+        }
+
+
 
         /// <summary>
-        /// Enter amount to be converted to Euro, String format: 3 all caps letters (e.g. "USD")
+        /// Enter desired input and output currency, String format: 3 all caps letters (e.g. "USD")
         /// Currency Format: floating point number
         /// </summary>
+        /// <param name="currIn"></param>
         /// <param name="currOut"></param>
         /// <param name="amount"></param>
+        /// <param name="auth"></param>
         /// <returns></returns>
-        public decimal ConvertToEur(string currOut, decimal amount)
+        /// 
+        public decimal ConvertToEur(string currOut, string amount, string auth)
         {
-            if (this.CurrencyData == null) SetCurrencyData();
+            if (auth != "CorrectHorseBatteryStaple")
+                return -1;
 
-            foreach (var item in CurrencyData)
-            {
-                if (item.Name.Equals(currOut)) return amount / item.Rate;
-            }
-
-            return 0;
+            return ConvertToEur(currOut, amount);
         }
+
+
 
         /// <summary>
         /// Enter desired input and output currency, String format: 3 all caps letters (e.g. "USD")
@@ -74,16 +101,18 @@ namespace CurrencyConverterService
         /// <param name="currOut"></param>
         /// <param name="amount"></param>
         /// <returns></returns>
-        public decimal CrossConvert(string currIn, string currOut, decimal amount)
+        public decimal CrossConvert(string currIn, string currOut, string amount, string auth)
         {
-            if (this.CurrencyData == null) SetCurrencyData();
-        
+            if (auth != "CorrectHorseBatteryStaple")
+                return -1;
+
             //get intermediate value
             decimal temp = ConvertToEur(currIn, amount);
 
             foreach (var item in CurrencyData)
             {
-                if (item.Name == currOut) return temp * item.Rate;
+                if (item.Name == currOut)
+                    return temp * item.Rate;
             }
 
             return 0;
