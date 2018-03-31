@@ -1,5 +1,5 @@
 # WebService 2 - Währungsrechner
- ```
+ ```cs
  /// <summary>
         /// Enter amount to be converted to Euro, String format: 3 all caps letters (e.g. "USD")
         /// Currency Format: floating point number
