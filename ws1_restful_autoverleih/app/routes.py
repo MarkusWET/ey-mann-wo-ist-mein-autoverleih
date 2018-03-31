@@ -4,7 +4,7 @@ from app.data_models.RentalHistory import RentalHistory
 from app.data_models.Car import Car
 from datetime import datetime, timedelta
 from flask import abort, request, jsonify, g, url_for, escape, Response
-from sqlalchemy import exc
+from sqlalchemy import exc, exists, and_
 
 
 @auth.verify_password
@@ -32,7 +32,13 @@ def new_user():
     user.hash_password(password)
     # TODO @markuswet: refactor to implement PBKDF2 with Salt and Iterations
     db.session.add(user)
-    db.session.commit()
+
+    try:
+        db.session.commit()
+    except exc.SQLAlchemyError:
+        db.session.rollback()
+        abort(Response("Query unsuccessful. Changes rolled back.\n", 500))
+
     return (jsonify({"username": user.username}), 201,
             {"Location": url_for("get_user", user_id=user.id, _external=True)})
 
@@ -48,81 +54,211 @@ def get_user(user_id):
 @app.route("/api/token")
 @auth.login_required
 def get_auth_token():
-    token = g.user.generate_auth_token(600)  # TODO @markuswet: Discuss with @mweber if duration is long/short enough
-    return jsonify({"token": token.decode("ascii"), "duration": 600})
+    token = g.user.generate_auth_token(60000)  # TODO @markuswet: Discuss with @mweber if duration is long/short enough
+    return jsonify({"token": token.decode("ascii"), "duration": 60000})
 
 
-@app.route("/api/resource")
+@app.route("/api/car/<car_id>/rent", methods=["PUT"])
 @auth.login_required
-def get_resource():
-    return jsonify({"data": "Hello, %s!" % g.user.username})
-
-
-@app.route("/api/car/rent", methods=["POST"])
-# @auth.login_required
-def rent_car():
-    error_msg = ""
-    error = False
+def rent_car(car_id):
+    """Rent car with id car_id for the dates (YYYY-MM-DD) defined in the body with start and end"""
     rental_start_date = "1901-01-01"
     rental_end_date = "1901-01-01"
-    car_id = 0
-    user_id = 0
 
     try:
-        car_id = int(request.json.get("car"))
+        car_id = int(car_id)
     except ValueError:
-        error = True
-        error_msg += "Car ID must be a number"
-    try:
-        user_id = int(request.json.get("user"))
-    except ValueError:
-        error = True
-        error_msg += "User ID must be a number"
+        abort(Response("Car ID must be a number\n", 400))
 
+    # Try to find user
+    user = User.query.get(g.user.id)
+    if user is None:
+        abort(Response("Invalid user", 400))
+
+    # Validate Dates
     try:
         rental_start_date = datetime.strptime(request.json.get("start"), "%Y-%m-%d")
     except ValueError:
-        error = True
-        error_msg += "Start date does not match the required format of \"YYYY-MM-DD\""
+        abort(Response("Start date does not match the required format of \"YYYY-MM-DD\"\n", 400))
 
     try:
         rental_end_date = datetime.strptime(request.json.get("end"), "%Y-%m-%d")
         rental_end_date = rental_end_date + timedelta(days=1, seconds=-1)
     except ValueError:
-        error = True
-        error_msg += "end date does not match the required format of \"YYYY-MM-DD\""
+        abort(Response("End date does not match the required format of \"YYYY-MM-DD\"\n", 400))
 
+    # Try to find car
     car = Car.query.get(car_id)
     if car is None:
-        error = True
-        error_msg += "Car with ID {} not found".format(car_id)
+        abort(Response("Car with ID {} not found.\n".format(car), 404))
 
-    user = User.query.get(user_id)
-    if user is None:
-        error = True
-        error_msg += "User with ID {} not found".format(user)
+    # Get all car_ids that are rented in the timeframe
+    rentals_subquery = db.session.query(RentalHistory.car_id). \
+        filter(RentalHistory.rented_from < rental_end_date,
+               RentalHistory.rented_to > rental_start_date,
+               RentalHistory.returned.isnot(True)). \
+        subquery()
 
-    if error:
-        abort(Response(escape(error_msg)))
+    # get all cars that are not in the rented car_ids
+    available_cars = db.session.query(Car). \
+        filter(~Car.id.in_(rentals_subquery)). \
+        all()
 
-    rental_history = db.session.query(RentalHistory). \
-        filter(RentalHistory.car_id == 1, RentalHistory.rented_to >= rental_start_date). \
-        order_by(RentalHistory.rented_to.desc()). \
-        first()
-
-    if rental_history is None:
+    if car not in available_cars:
+        abort(Response("Car {} not available during the defined timeframe!".format(car.id), 409))
+    else:
         duration = rental_end_date - rental_start_date
         total = car.price_per_day * duration.days
         rental = RentalHistory(car_id=car.id,
                                user_id=user.id,
                                rented_from=rental_start_date,
                                rented_to=rental_end_date,
-                               total_price=total)
+                               total_price=total,
+                               returned=False)
         db.session.add(rental)
+
         try:
             db.session.commit()
         except exc.SQLAlchemyError:
-            abort(Response("Query unsuccessful. Changes rolled back", 500))
+            db.session.rollback()
+            abort(Response("Query unsuccessful. Changes rolled back.\n", 500))
 
-    else:
-        abort(Response("Car {} already rented in that timeframe.".format(car.id)))
+        return Response("Car {} rented successfully.\n".format(car.id), 200)
+
+
+@app.route("/api/car/<car_id>/return", methods=["PUT"])
+@auth.login_required
+def return_car(car_id):
+    # TODO @markuswet (optional): add column return_date and calculate the difference between booked return and actual return as late fee
+
+    try:
+        car_id = int(car_id)
+    except ValueError:
+        abort(Response("Car ID must be a number\n", 400))
+
+    # Try to find car
+    car = Car.query.get(car_id)
+    if car is None:
+        abort(Response("Car with ID {} not found.\n".format(car), 404))
+
+    rental = db.session.query(RentalHistory). \
+        filter(RentalHistory.car_id == car_id,
+               RentalHistory.user_id == g.user.id,
+               RentalHistory.returned.isnot(True)). \
+        first()
+
+    if rental is None:
+        abort(Response("No valid rental found to return.\n", 400))
+
+    rental.returned = True
+
+    try:
+        db.session.commit()
+    except exc.SQLAlchemyError:
+        db.session.rollback()
+        abort(Response("Query unsuccessful. Changes rolled back.\n", 500))
+
+    return Response("Car with ID {} returned successfully.".format(car_id), 200)
+
+
+@app.route("/api/car/available", methods=["PUT"])
+@auth.login_required
+def get_available_cars():
+    rental_start_date = "1901-01-01"
+    rental_end_date = "1901-01-01"
+
+    # Validate Date
+    try:
+        rental_start_date = datetime.strptime(request.json.get("start"), "%Y-%m-%d")
+    except ValueError:
+        abort(Response("Start date does not match the required format of \"YYYY-MM-DD\"\n", 400))
+
+    try:
+        rental_end_date = datetime.strptime(request.json.get("end"), "%Y-%m-%d")
+        rental_end_date = rental_end_date + timedelta(days=1, seconds=-1)
+    except ValueError:
+        abort(Response("End date does not match the required format of \"YYYY-MM-DD\"\n", 400))
+
+    # Rental History Logic
+    #  -- powered by: way smarter brains @ StackOverflow:
+    #  -- https://stackoverflow.com/questions/6111263/sql-scheduling-select-all-rooms-available-for-given-date-range/6111388#6111388
+    # Select * From Car c
+    # where not exists
+    #     (Select * From RentalHistory
+    #     Where car_id = c.id
+    #         And RentalHistory.rented_from < rental_end_date
+    #         And RentalHistory.rented_to > rental_start_date)
+
+    # Get all car_ids that are rented in the timeframe
+    rentals_subquery = db.session.query(RentalHistory.car_id). \
+        filter(RentalHistory.rented_from < rental_end_date, RentalHistory.rented_to > rental_start_date). \
+        subquery()
+
+    # get all cars that are not in the rented car_ids
+    available = db.session.query(Car). \
+        filter(~Car.id.in_(rentals_subquery)). \
+        all()
+
+    if len(available) < 1:
+        abort(Response("No cars available!", 404))
+
+    # TODO @markuswet: Re-calculate prices in target currency
+    target_currency = "EUR"
+    exchange_rate = 1.0
+
+    if target_currency != "EUR":
+        for car in available:
+            car.price_per_day = car.price_per_day * exchange_rate
+    return jsonify(available=[e.serialize() for e in available])
+
+
+@app.route("/api/car/all")
+def get_all_cars():
+    all_cars = db.session.query(Car). \
+        all()
+    if all_cars is None:
+        abort(Response("No cars found!", 500))
+
+    # TODO @markuswet: Re-calculate prices in target currency
+    target_currency = "EUR"
+    exchange_rate = 1.0
+
+    if target_currency != "EUR":
+        for car in all_cars:
+            car.price_per_day = car.price_per_day * exchange_rate
+    return jsonify(available=[e.serialize() for e in all_cars])
+
+
+@app.route("/api/user/<user_id>/rented")
+@auth.login_required
+def get_rented_cars_of_user(user_id):
+    uid = 0
+
+    try:
+        uid = int(user_id)
+    except ValueError:
+        abort(Response("User ID must be a number\n", 400))
+
+    if uid != g.user.id:
+        abort(Response("User ID does not match Token User ID!", 400))
+
+    # Try to find user
+    user = User.query.get(g.user.id)
+    if user is None:
+        abort(Response("Invalid user", 400))
+
+    rented_cars = db.session.query(RentalHistory). \
+        filter(RentalHistory.user_id == uid, RentalHistory.returned.isnot(True)). \
+        all()
+    if len(rented_cars) < 1:
+        abort(Response("No rented cars for User {} found".format(uid), 200))
+
+    # TODO @markuswet: Re-calculate prices in target currency
+    target_currency = "EUR"
+    exchange_rate = 1.0
+
+    if target_currency != "EUR":
+        for car in rented_cars:
+            car.price_per_day = car.price_per_day * exchange_rate
+
+    return jsonify(rentals=[e.serialize() for e in rented_cars])
