@@ -70,9 +70,9 @@ http://127.0.0.1:5000/api/car/available
 ### List all cars - `PUT /api/car/all`
 Returns a list of all available cars, regardless of availability.
 
-**Request**
+**Request (with currency conversion to Russian Rubel)**
 ```shell
-curl -u $JWT -i -X GET http://127.0.0.1:5000/api/car/all
+curl -u $JWT -i -X GET http://127.0.0.1:5000/api/car/all?currency=RUB
 ```
 
 **Response**
@@ -86,16 +86,16 @@ curl -u $JWT -i -X GET http://127.0.0.1:5000/api/car/all
       "gps_long": 16.384843, 
       "id": 1, 
       "model": "Mustang", 
-      "price_per_day": 150.0
+      "price_per_day": 10633.455
     }, 
     {
       "color": "#50191F", 
       "company": "Lada", 
-      "gps_lat": 48.213024,
+      "gps_lat": 48.213024, 
       "gps_long": 16.384843, 
       "id": 2, 
       "model": "Taiga", 
-      "price_per_day": 10.0
+      "price_per_day": 708.897
     }, 
     {
       "color": "#FF2800", 
@@ -104,10 +104,11 @@ curl -u $JWT -i -X GET http://127.0.0.1:5000/api/car/all
       "gps_long": 16.384843, 
       "id": 3, 
       "model": "Enzo", 
-      "price_per_day": 6000.0
+      "price_per_day": 425338.2
     }
   ]
 }
+
 ```
 ### List all rented cars of user - `GET /api/user/<user_id>/rented`
 ***Requires authetication***

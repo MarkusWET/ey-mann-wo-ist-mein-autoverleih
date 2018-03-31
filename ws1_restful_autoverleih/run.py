@@ -7,6 +7,9 @@ from app.data_models.Car import Car
 from app.data_models.RentalHistory import RentalHistory
 
 
+# from app.currency_exchange import convert_from_eur, convert_to_eur
+
+
 def init_db():
     # Create Demo User
     demo_user = User(username="test_user")
@@ -70,6 +73,9 @@ def init_db():
 
 
 if __name__ == "__main__":
+    # curr_new = convert_from_eur("eur", "1")
+    # curr_new = convert_to_eur("rub", "70.89")
+
     ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
     DB_PATH = os.path.join(ROOT_DIR, "app", "db.sqlite")
 
