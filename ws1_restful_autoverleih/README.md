@@ -64,7 +64,6 @@ http://127.0.0.1:5000/api/car/available
     }
   ]
 }
-
 ```
 
 ### List all cars - `PUT /api/car/all`
@@ -108,7 +107,6 @@ curl -u $JWT -i -X GET http://127.0.0.1:5000/api/car/all?currency=RUB
     }
   ]
 }
-
 ```
 ### List all rented cars of user - `GET /api/user/<user_id>/rented`
 ***Requires authetication***

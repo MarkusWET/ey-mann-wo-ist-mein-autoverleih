@@ -4,8 +4,8 @@ from app.data_models.User import User
 from app.data_models.RentalHistory import RentalHistory
 from app.data_models.Car import Car
 from datetime import datetime, timedelta
-from flask import abort, request, jsonify, g, url_for, escape, Response
-from sqlalchemy import exc, exists, and_
+from flask import abort, request, jsonify, g, url_for, render_template, Response
+from sqlalchemy import exc
 
 
 @auth.verify_password
@@ -23,7 +23,9 @@ def verify_password(username_or_token, password):
 
 @application.route("/")
 def home():
-    return "Hello AWS!"
+    with open("./README.md") as f:
+        content = f.read()
+        return render_template("index.html", text=content)
 
 
 @application.route("/api/users", methods=["POST"])
@@ -221,7 +223,7 @@ def get_available_cars():
     if target_currency != "EUR":
         for car in available:
             car.price_per_day = convert_from_eur(target_currency, str(car.price_per_day))
-    return jsonify(available=[e.serialize() for e in available])
+    return jsonify(available=[e.serialize() for e in available], currency=target_currency)
 
 
 @application.route("/api/car/all")
@@ -243,7 +245,7 @@ def get_all_cars():
     if target_currency != "EUR":
         for car in all_cars:
             car.price_per_day = convert_from_eur(target_currency, str(car.price_per_day))
-    return jsonify(available=[e.serialize() for e in all_cars])
+    return jsonify(available=[e.serialize() for e in all_cars], currency_format=target_currency)
 
 
 @application.route("/api/user/<user_id>/rented")
@@ -285,4 +287,4 @@ def get_rented_cars_of_user(user_id):
         for car in rented_cars:
             car.price_per_day = convert_from_eur(target_currency, str(car.price_per_day))
 
-    return jsonify(rentals=[e.serialize() for e in rented_cars])
+    return jsonify(rentals=[e.serialize() for e in rented_cars], currency=target_currency)
