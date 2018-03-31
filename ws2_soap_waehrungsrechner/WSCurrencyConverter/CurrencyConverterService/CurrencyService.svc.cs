@@ -48,6 +48,9 @@ namespace CurrencyConverterService
                 .ToList();
 
             this.CurrencyData = currencies;
+
+            //Adding EUR with rate 1, in case convertion is used Euro to Euro
+            currencies.Add(new Currency {Name = "EUR", Rate = 1m });
         }
 
         private decimal ConvertToEur(string currOut, string amount)
