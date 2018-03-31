@@ -6,11 +6,15 @@ using System.Net;
 using System.Timers;
 using System.Xml.Linq;
 using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CurrencyConverterService
 {
     public class CurrencyService : ICurrencyService
     {
+        string hashedKey = sha256("CorrectHorseBatteryStaple");
+
         public List<Currency> CurrencyData { get; set; }
 
         private void SetCurrencyData()
@@ -46,13 +50,11 @@ namespace CurrencyConverterService
             this.CurrencyData = currencies;
         }
 
-
         private decimal ConvertToEur(string currOut, string amount)
         {
             try
             {
-                decimal amountParsed = 0m;
-                Decimal.TryParse(amount, NumberStyles.AllowDecimalPoint, new CultureInfo("en-EN"), out amountParsed);
+                decimal amountParsed = ParseDecimal(amount);
 
                 if (this.CurrencyData == null)
                     SetCurrencyData();
@@ -71,7 +73,29 @@ namespace CurrencyConverterService
             }
         }
 
+        private static decimal ParseDecimal(string strIn)
+        {
+            decimal decOut;
+            Decimal.TryParse(strIn, NumberStyles.AllowDecimalPoint, new CultureInfo("en-EN"), out decOut);
+            return decOut;
+        }
 
+        /// <summary>
+        /// taken from: https://stackoverflow.com/questions/12416249/hashing-a-string-with-sha256
+        /// </summary>
+        /// <param name="randomString"></param>
+        /// <returns></returns>
+        static string sha256(string randomString)
+        {
+            var crypt = new SHA256Managed();
+            string hash = String.Empty;
+            byte[] crypto = crypt.ComputeHash(Encoding.UTF8.GetBytes(randomString));
+            foreach (byte theByte in crypto)
+            {
+                hash += theByte.ToString("x2");
+            }
+            return hash;
+        }
 
         /// <summary>
         /// Enter desired input and output currency, String format: 3 all caps letters (e.g. "USD")
@@ -85,8 +109,11 @@ namespace CurrencyConverterService
         /// 
         public decimal ConvertToEur(string currOut, string amount, string auth)
         {
-            if (auth != "CorrectHorseBatteryStaple")
+            if (!hashedKey.Equals(auth))
                 return -1;
+
+            currOut = currOut.ToUpper();
+
 
             return ConvertToEur(currOut, amount);
         }
@@ -103,11 +130,24 @@ namespace CurrencyConverterService
         /// <returns></returns>
         public decimal CrossConvert(string currIn, string currOut, string amount, string auth)
         {
-            if (auth != "CorrectHorseBatteryStaple")
+            if (!hashedKey.Equals(auth))
                 return -1;
 
+            currIn = currIn.ToUpper();
+            currOut = currOut.ToUpper();
+
+            Decimal temp;
+
             //get intermediate value
-            decimal temp = ConvertToEur(currIn, amount);
+            if (currIn.Equals("EUR"))
+            {
+                temp = ParseDecimal(amount);
+                SetCurrencyData();
+            }
+            else
+            {
+                temp = ConvertToEur(currIn, amount);
+            }
 
             foreach (var item in CurrencyData)
             {
