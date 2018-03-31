@@ -9,4 +9,6 @@ matrix:
       script:
         - python ./tests/autoverleih_tests.py test
     - language: csharp
-      solution: .ws2_soap_waehrungsrechner/WSCurrencyConverter/WSCurrencyConverter.sln
+      before_script:
+        - cd .ws2_soap_waehrungsrechner/WSCurrencyConverter
+      solution: WSCurrencyConverter.sln
