@@ -53,7 +53,7 @@ namespace CurrencyConverterService
             currencies.Add(new Currency {Name = "EUR", Rate = 1m });
         }
 
-        private decimal ConvertToEur(string currOut, string amount)
+        private decimal ConvertToEur(string currIn, string amount)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace CurrencyConverterService
 
                 foreach (var item in CurrencyData)
                 {
-                    if (item.Name.Equals(currOut))
+                    if (item.Name.Equals(currIn))
                         return amountParsed / item.Rate;
                 }
 
@@ -100,37 +100,17 @@ namespace CurrencyConverterService
             return hash;
         }
 
-        /// <summary>
-        /// Enter desired input and output currency, String format: 3 all caps letters (e.g. "USD")
-        /// Currency Format: floating point number
-        /// </summary>
-        /// <param name="currIn"></param>
-        /// <param name="currOut"></param>
-        /// <param name="amount"></param>
-        /// <param name="auth"></param>
-        /// <returns></returns>
-        /// 
-        public decimal ConvertToEur(string currOut, string amount, string auth)
+        public decimal ConvertToEur(string currIn, string amount, string auth)
         {
             if (!hashedKey.Equals(auth))
                 return -1;
 
-            currOut = currOut.ToUpper();
+            currIn = currIn.ToUpper();
 
 
-            return ConvertToEur(currOut, amount);
+            return ConvertToEur(currIn, amount);
         }
 
-
-
-        /// <summary>
-        /// Enter desired input and output currency, String format: 3 all caps letters (e.g. "USD")
-        /// Currency Format: floating point number
-        /// </summary>
-        /// <param name="currIn"></param>
-        /// <param name="currOut"></param>
-        /// <param name="amount"></param>
-        /// <returns></returns>
         public decimal CrossConvert(string currIn, string currOut, string amount, string auth)
         {
             if (!hashedKey.Equals(auth))
