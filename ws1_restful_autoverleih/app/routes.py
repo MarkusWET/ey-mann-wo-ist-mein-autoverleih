@@ -1,5 +1,5 @@
-from app import app, db, auth
-from app.currency_exchange import convert_from_eur, convert_to_eur
+from app import application, db, auth
+from app.currency_exchange import convert_from_eur, convert_to_eur, VALID_CURRENCIES
 from app.data_models.User import User
 from app.data_models.RentalHistory import RentalHistory
 from app.data_models.Car import Car
@@ -21,7 +21,12 @@ def verify_password(username_or_token, password):
     return True
 
 
-@app.route("/api/users", methods=["POST"])
+@application.route("/")
+def home():
+    return "Hello AWS!"
+
+
+@application.route("/api/users", methods=["POST"])
 def new_user():
     username = request.json.get("username")
     password = request.json.get("password")
@@ -44,7 +49,7 @@ def new_user():
             {"Location": url_for("get_user", user_id=user.id, _external=True)})
 
 
-@app.route("/api/users/<user_id>")
+@application.route("/api/users/<user_id>")
 def get_user(user_id):
     user = User.query.get(user_id)
     if not user:
@@ -52,14 +57,14 @@ def get_user(user_id):
     return jsonify({"username": user.username})
 
 
-@app.route("/api/token")
+@application.route("/api/token")
 @auth.login_required
 def get_auth_token():
     token = g.user.generate_auth_token(60000)  # TODO @markuswet: Discuss with @mweber if duration is long/short enough
     return jsonify({"token": token.decode("ascii"), "duration": 60000})
 
 
-@app.route("/api/car/<car_id>/rent", methods=["PUT"])
+@application.route("/api/car/<car_id>/rent", methods=["PUT"])
 @auth.login_required
 def rent_car(car_id):
     """Rent car with id car_id for the dates (YYYY-MM-DD) defined in the body with start and end"""
@@ -127,7 +132,7 @@ def rent_car(car_id):
         return Response("Car {} rented successfully.\n".format(car.id), 200)
 
 
-@app.route("/api/car/<car_id>/return", methods=["PUT"])
+@application.route("/api/car/<car_id>/return", methods=["PUT"])
 @auth.login_required
 def return_car(car_id):
     # TODO @markuswet (optional): add column return_date and calculate the difference between booked return and actual return as late fee
@@ -162,7 +167,7 @@ def return_car(car_id):
     return Response("Car with ID {} returned successfully.".format(car_id), 200)
 
 
-@app.route("/api/car/available", methods=["PUT"])
+@application.route("/api/car/available", methods=["PUT"])
 @auth.login_required
 def get_available_cars():
     rental_start_date = "1901-01-01"
@@ -206,7 +211,12 @@ def get_available_cars():
 
     # TODO @markuswet: refactor recalculation into own method
     # Re-calculate prices in target currency
-    target_currency = request.args.get("currency")
+    target_currency = request.args.get("currency", default="EUR").strip()
+    if not target_currency:
+        target_currency = "EUR"
+
+    if target_currency not in VALID_CURRENCIES:
+        abort(Response("Invalid currency.", 400))
 
     if target_currency != "EUR":
         for car in available:
@@ -214,7 +224,7 @@ def get_available_cars():
     return jsonify(available=[e.serialize() for e in available])
 
 
-@app.route("/api/car/all")
+@application.route("/api/car/all")
 def get_all_cars():
     all_cars = db.session.query(Car).all()
     db.session.close()
@@ -223,7 +233,12 @@ def get_all_cars():
 
     # TODO @markuswet: refactor recalculation into own method
     # Re-calculate prices in target currency
-    target_currency = request.args.get("currency")
+    target_currency = request.args.get("currency", default="EUR").strip()
+    if not target_currency:
+        target_currency = "EUR"
+
+    if target_currency not in VALID_CURRENCIES:
+        abort(Response("Invalid currency.", 400))
 
     if target_currency != "EUR":
         for car in all_cars:
@@ -231,7 +246,7 @@ def get_all_cars():
     return jsonify(available=[e.serialize() for e in all_cars])
 
 
-@app.route("/api/user/<user_id>/rented")
+@application.route("/api/user/<user_id>/rented")
 @auth.login_required
 def get_rented_cars_of_user(user_id):
     uid = 0
@@ -259,7 +274,12 @@ def get_rented_cars_of_user(user_id):
 
     # TODO @markuswet: refactor recalculation into own method
     # Re-calculate prices in target currency
-    target_currency = request.args.get("currency")
+    target_currency = request.args.get("currency", default="EUR").strip()
+    if not target_currency:
+        target_currency = "EUR"
+
+    if target_currency not in VALID_CURRENCIES:
+        abort(Response("Invalid currency.", 400))
 
     if target_currency != "EUR":
         for car in rented_cars:

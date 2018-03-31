@@ -11,6 +11,8 @@ matrix:
         
     - language: csharp
       solution: ./ws2_soap_waehrungsrechner/WSCurrencyConverter/WSCurrencyConverter.sln
+      before_install:
+        - cd ws2_soap_waehrungsrechner/WSCurrencyConverter/CurrencyConverterService
       install:
         -
       script:

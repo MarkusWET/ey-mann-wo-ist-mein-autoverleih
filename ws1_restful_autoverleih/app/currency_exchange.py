@@ -12,6 +12,11 @@ client = Client(url)
 SECRET_SOAP_KEY = b"CorrectHorseBatteryStaple"
 HASHED_SOAP_KEY = hashlib.sha256(SECRET_SOAP_KEY).hexdigest()
 
+VALID_CURRENCIES = (
+    "EUR", "USD", "JPY", "BGN", "CZK", "DKK", "GBP", "HUF", "PLN", "RON", "SEK", "CHF", "ISK", "NOK", "HRK", "RUB",
+    "TRY", "AUD", "BRL", "CAD", "CNY", "HKD", "IDR", "ILS", "INR", "KRW", "MXN", "MYR", "NZD", "PHP", "SGD", "THB",
+    "ZAR")
+
 
 def convert_from_eur(target_currency, amount):
     return client.service.CrossConvert("EUR", target_currency, amount, HASHED_SOAP_KEY)
