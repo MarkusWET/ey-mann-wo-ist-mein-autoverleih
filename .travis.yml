@@ -6,8 +6,6 @@ matrix:
         - cd ws1_restful_autoverleih
       install:
         - pip install -r requirements.txt
-      before_script:
-        - cd ws1_restful_autoverleih
       script:
         - python ./tests/autoverleih_tests.py test
         
