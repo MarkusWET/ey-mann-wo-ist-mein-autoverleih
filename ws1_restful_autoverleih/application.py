@@ -24,7 +24,8 @@ def init_db():
                        price_per_day=150.0,
                        gps_lat=48.213024,
                        gps_long=16.384843,
-                       color="#0088CC")
+                       color="#0088CC",
+                       image_path="mustang.JPG")
     db.session.add(demo_mustang)
 
     demo_lada = Car(company="Lada",
@@ -32,7 +33,8 @@ def init_db():
                     price_per_day=10.0,
                     gps_lat=48.213024,
                     gps_long=16.384843,
-                    color="#50191F")
+                    color="#50191F",
+                    image_path="lada.jpg")
     db.session.add(demo_lada)
 
     demo_enzo = Car(company="Ferrari",
@@ -40,7 +42,8 @@ def init_db():
                     price_per_day=6000.0,
                     gps_lat=48.213024,
                     gps_long=16.384843,
-                    color="#FF2800")  # the real Ferrari red <3
+                    color="#FF2800",
+                    image_path="ferrari.jpg")  # the real Ferrari red <3
     db.session.add(demo_enzo)
 
     db.session.commit()

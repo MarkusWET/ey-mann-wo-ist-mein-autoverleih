@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import suds
 from suds.client import Client
 import hashlib
 

@@ -4,7 +4,7 @@ from app.data_models.User import User
 from app.data_models.RentalHistory import RentalHistory
 from app.data_models.Car import Car
 from datetime import datetime, timedelta
-from flask import abort, request, jsonify, g, url_for, render_template, Response
+from flask import abort, request, jsonify, g, url_for, send_from_directory, render_template, Response
 from sqlalchemy import exc
 
 
@@ -288,3 +288,22 @@ def get_rented_cars_of_user(user_id):
             car.price_per_day = convert_from_eur(target_currency, str(car.price_per_day))
 
     return jsonify(rentals=[e.serialize() for e in rented_cars], currency=target_currency)
+
+
+@application.route("/api/car/<car_id>/img")
+def get_car_image(car_id):
+    error = send_from_directory("static/img", "error.png")
+
+    try:
+        car_id = int(car_id)
+    except ValueError:
+        return error
+
+    # Try to find car
+    car = Car.query.get(car_id)
+    db.session.close()
+
+    if car is None:
+        return error
+
+    return send_from_directory("static/img", car.image_path)
