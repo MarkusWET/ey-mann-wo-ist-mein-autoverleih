@@ -5,6 +5,7 @@ from flask_misaka import Misaka
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 # initialization
 # FYI: AWS ElaticBeanstalk needs the app to be called "application".
@@ -22,6 +23,7 @@ application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///{}".format(
 # extensions
 db = SQLAlchemy(application)
 migrate = Migrate(application, db)
+cors = CORS(application, resources={r"/api/*": {"origins": "*"}})
 md = Misaka()
 md.init_app(application)
 auth = HTTPBasicAuth()

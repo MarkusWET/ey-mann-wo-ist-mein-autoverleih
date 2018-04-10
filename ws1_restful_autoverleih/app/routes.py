@@ -1,4 +1,4 @@
-from app import application, db, auth
+from app import application, db, auth, cors
 from app.currency_exchange import convert_from_eur, convert_to_eur, VALID_CURRENCIES
 from app.data_models.User import User
 from app.data_models.RentalHistory import RentalHistory
