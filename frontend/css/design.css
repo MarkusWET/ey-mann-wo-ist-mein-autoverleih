@@ -64,6 +64,10 @@ nav a{
 nav a img{
     margin-left:1.5rem;
 }
+.search-form-container{
+    margin: 0% 0% 2% 1%;
+}
+
 
 /* cars */
 .car:hover {
@@ -71,8 +75,26 @@ nav a img{
 }
 .car{
     text-align: left;
+    float:left;
+    width: 46%;
+    margin: 0% 2% 4% 2%;
 }
-.line-1, .line-2{
+.car-img {
+    height: auto;
+    width: 100%;
+}
+.car-rent-btn, .car-return-btn{
+    margin-left: 1em;
+}
+
+@media (max-width: 560px) { 
+    .car{
+        width: 96%;
+        margin: 2%;
+    }
+}
+
+/* .line-1, .line-2{
     display: inline-block;
 }
 .line-2{
@@ -114,7 +136,7 @@ nav a img{
     .line-2{
         float:none;
     }
-}
+} */
 
 /* gmaps */
 .card iframe{
@@ -123,6 +145,9 @@ nav a img{
 }
 
 /* loading animation */
+.hide {
+    display:none;
+}
 #app-loading{
     z-index: 450;
     width: 40px;

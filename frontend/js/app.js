@@ -13,21 +13,22 @@ appSettings = {
     "messageHideAfter": 2000, // ms
     "showSystemLoadingAfter": 100, //ms
     "ws1": {
-        "url": "http://52.29.144.248/api"
+        "url": "http://ec2-52-29-144-248.eu-central-1.compute.amazonaws.com/api"
     },
 };
 
 $(document).ready(function() {
-    // login click function - login page
-    $('body.login .login-btn').click(function() {
+    //login click function - login page
+    $('body.login .login-btn').click(function(e) {
         login($('body.login #inputUname').val(), $('body.login #inputPassword').val());
+        e.preventDefault();
     })
 
     //init cars page
     if($('body.cars').length && false) {
-        insertAvailableCars("2018-03-12", "2018-03-15");
+        insertAvailableCars(currency);
 
-        var userId = getUserId();
+        userId = getUserId();
         if(userId == null) {
             log("getUserId: null");
             showError("Es trat ein Problem auf!");
@@ -35,6 +36,13 @@ $(document).ready(function() {
             insertRentedCars(userId);
         }
     }
+
+    //change currency -> reload available cars
+    $('#currency').change(function(e) {
+        currency = $(this).val();
+        insertAvailableCars(currency);
+        e.preventDefault();
+    })
 });
 
 /**
@@ -54,11 +62,13 @@ $(document).ready(function() {
 function login(uname, passw) {
     showAppLoading();
 
+    log("login: "+uname, passw);
+
     ajaxRequest(
         appSettings.ws1.url + '/token',    // url
         'GET',  // method
         { // headers
-            "Authorization": "Basic " + uname + ':' + passw
+            "Authorization": "Basic " + Base64.encode(uname + ':' + passw)
         },
         'json', // returnType
         {}  // para
@@ -131,12 +141,16 @@ function getUserId(token) {
 /**
  * get all available cars (cars that are not rented during the submitted timeframe) - request
  */
-function getAllAvailableCars(start, end) {
+function getAllAvailableCars(start, end, currency) {
 
     // TODO: type of start, end
+    if(currency.length != 3) {
+        showError("Bitte gültige Währung angeben!");
+        return;
+    }
 
     return ajaxRequest(
-        appSettings.ws1.url + '/car/available',    // url
+        appSettings.ws1.url + '/car/available?currency='+currency,    // url
         'PUT',  // method
         { // headers
             "Authorization": "Basic " + getAuthToken() + ':' 
@@ -146,6 +160,24 @@ function getAllAvailableCars(start, end) {
             "start" : start,
             "end": end
         }  
+    )
+}
+
+function newUser(n, p) {
+
+    // TODO: type of start, end
+
+    return ajaxRequest(
+        appSettings.ws1.url + '/users',    // url
+        'POST',  // method
+        { // headers
+            // "Authorization": "Basic " + getAuthToken() + ':' 
+        },
+        'json', // returnType
+        JSON.stringify({ // para
+            "username" : n,
+            "password": p
+        })
     )
 }
 
@@ -237,13 +269,18 @@ function returnCarRequest(carId) {
 /**
  * insert cars in the available cars section
  */
-function insertAvailableCars(start, end){
+function insertAvailableCars(currency){
     showAppLoading();
+
+    if(currency.length != 3) {
+        showError("Bitte gültige Währung auswählen!");
+        return;
+    }
 
     // remove all displayed cars
     $('.availabe-cars-container').html("");
 
-    getAllAvailableCars(start, end)
+    getAllAvailableCars("2018-03-12", "2018-03-15", currency)
     .done(function(data) {
         log(['getAllAvailableCars:', data]);
         hideAppLoading();
@@ -255,11 +292,7 @@ function insertAvailableCars(start, end){
 
         // click functions
         $('.available-cars-container car .car-rent-btn').unbind('click').click(function(){
-            rentCar(
-                parseInt($(this).closest('.car').attr('data-id')),
-                "2018-03-12", 
-                "2018-03-15"
-            );
+            rentCarOptionsOpen($(this).closest('.car').attr('data-id'));
         })
     })
     .fail(function(jqXHR) {
@@ -273,19 +306,33 @@ function insertAvailableCars(start, end){
  * outputs the HTML of a available car
  */
 function outputAvailableCar(car) {
+//     var html = ''+
+// '<div class="car" data-id="' + car.id + '">'+
+//     '<div class="line-1">'+
+//         '<div class="car-description car-img"><img src="img/sedan-car-model.svg"></div>'+
+//         '<div class="car-description car-color" style="background-color: ' + car.color + '"></div>'+
+//         '<div class="car-description car-label">' + car.company + '</div>'+
+//         '<div class="car-description car-model">' + car.model + '</div>'+
+//         '<div class="clearfix"></div>'+
+//     '</div><div class="line-2">'+
+//         '<div class="car-description car-price">' + car.price_per_day + '/Tag</div>'+
+//         '<div class="car-description car-rent"><button type="button" class="btn btn-primary car-rent-btn">ausborgen</button></div>'+
+//         '<div class="clearfix"></div>'+
+//     '</div><div class="clearfix"></div>'+
+// '</div>';
+
     var html = ''+
-'<div class="car" data-id="' + car.id + '">'+
-    '<div class="line-1">'+
-        '<div class="car-description car-img"><img src="img/sedan-car-model.svg"></div>'+
-        '<div class="car-description car-color" style="background-color: ' + car.color + '"></div>'+
-        '<div class="car-description car-label">' + car.company + '</div>'+
-        '<div class="car-description car-model">' + car.model + '</div>'+
+    '<div class="card car">'+
+    '<img class="car-img" src=" http://flask-env.igdtepjkiu.eu-central-1.elasticbeanstalk.com/static/img/ferrari.jpg" alt="car image">'+
+    '<div class="card-body">'+
+        '<h5 class="card-title">'+
+            '<span class="car-description car-label">' + car.company + '</span>&nbsp;'+
+            '<span class="car-description car-model">' + car.model + '</span>'+
+        '</h5>'+
+        '<span class="car-description car-price">' + car.price_per_day + '/Tag</span>'+
+        '<button type="button" class="btn btn-primary car-rent-btn">ausborgen</button>'+
         '<div class="clearfix"></div>'+
-    '</div><div class="line-2">'+
-        '<div class="car-description car-price">' + car.price_per_day + '/Tag</div>'+
-        '<div class="car-description car-rent"><button type="button" class="btn btn-primary car-rent-btn">ausborgen</button></div>'+
-        '<div class="clearfix"></div>'+
-    '</div><div class="clearfix"></div>'+
+   ' </div>'+
 '</div>';
 
     $('.available-cars-container').append(html);
@@ -328,6 +375,9 @@ function insertRentedCars(userId){
             outputRentedCar(car, rentedReturn.rentals[i]);
         }
 
+        // update counter in nav
+        updateRentedCarsCounter(rentedReturn.rentals.length);
+
         // click functions
         $('.rented-cars-container car .car-return-btn').unbind('click').click(function(){
             returnCar(
@@ -363,6 +413,22 @@ function outputRentedCar(car, infos) {
     '</div><div class="clearfix"></div>'+
 '</div>';
 
+    var html = ''+
+    '<div class="card car">'+
+    '<img class="car-img" src=" http://flask-env.igdtepjkiu.eu-central-1.elasticbeanstalk.com/static/img/ferrari.jpg" alt="car image">'+
+    '<div class="card-body">'+
+        '<h5 class="card-title">'+
+            '<span class="car-description car-label">' + car.company + '</span>&nbsp;'+
+            '<span class="car-description car-model">' + car.model + '</span>'+
+        '</h5>'+
+        '<div class="car-description car-price">' + car.price_per_day + '/Tag</div>'+
+        '<div class="car-description car-rent-since">seit 18.8.2016</div>'+
+        '<span class="car-description car-costs">= 240,-€</span>'+
+        '<button type="button" class="btn btn-primary car-return-btn">retournieren</button>'+
+        '<div class="clearfix"></div>'+
+    ' </div>'+
+    '</div>';
+
     $('.rented-cars-container').append(html);
 }
 
@@ -380,6 +446,10 @@ function returnCar(carId) {
         //remove rented car
         $('.rented-cars-container').find('car[data-id="' + carId + '"]').remove();
 
+        //update view
+        insertAvailableCars(currency);
+
+
         showMessage("Danke fürs zurück bringen!");
     })
     .fail(function(jqXHR) {
@@ -387,6 +457,28 @@ function returnCar(carId) {
         showErrorMessage(jqXHR, 'Das Auto konnte nicht retoniert werden!');
         handleError(jqXHR);
     });
+}
+
+/**
+ * open rent car options-popup
+ */
+function rentCarOptionsOpen(carId) {
+    $('#carId').val(parseInt(carId));
+
+    $('#rentCarOptions .rentCar-btn').unbind('click').click(function(){
+        var startDate = getDateFromForm($('#startDate'));
+        var endDate = getDateFromForm($('#startDate'));
+        if(startDate != null && endDate != null) {
+            rentCar(
+                parseInt(carId),
+                startDate,
+                endDate
+            );
+        } else {
+            showError("Bitte Start und End Datum im Format YYYY-MM-DD angeben.")
+        }
+    });
+    $('#rentCarOptions').modal('show');
 }
 
 /**
@@ -403,6 +495,9 @@ function rentCar(carId, start, end) {
         //remove available car
         $('.availabe-cars-container').find('car[data-id="' + carId + '"]').remove();
 
+        //update view
+        insertRentedCars(userId);
+
         showMessage("Viel Spaß mit deinem Auto!");
     })
     .fail(function(jqXHR) {
@@ -411,6 +506,25 @@ function rentCar(carId, start, end) {
         handleError(jqXHR);
     });
 }
+
+/**
+ * update the rented car counter in Header
+ */
+function updateRentedCarsCounter(amount) {
+    $('nav .rented-cars-counter').text(parseInt(amount));
+}
+
+/**
+ * get date from input type date - returns timestamp in s
+ */
+function getDateFromForm(element) {
+    var value = element.val();
+    var date = Date.parse(value); // timestamp in ms
+    if(date > 0)
+        return null;
+    return date/1000;
+}
+
 
 /**
  * 
@@ -447,6 +561,7 @@ function ajaxRequest(url, method, headers, returnType, data) {
         method: method,
         headers: headers,
         dataType: returnType,
+        contentType: "application/json",
         data: data
     })
 }
@@ -549,8 +664,8 @@ function showError(message)
 function showAppLoading()
 {
     // if variable not defined - error
-    if(typeof appLoading == undefined) {
-        throw 'appLoading not defined';
+    if(typeof appLoading == "undefined") {
+        appLoading = {'counter':0, 'id':null};
     }
 
     // if HTML not already created

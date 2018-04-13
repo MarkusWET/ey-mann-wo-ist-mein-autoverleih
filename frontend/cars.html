@@ -18,58 +18,84 @@
 
   <body class="text-center cars">
     <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 bg-white border-bottom box-shadow">
-        <h3 class="my-0 mr-md-auto font-weight-normal"><img class="mb-4" src="img/logo.png" alt="" width="186" height="92"></h5>
+        <h3 class="my-0 mr-md-auto font-weight-normal"><a href="sign-in.html"><img class="mb-4" src="img/logo.png" alt="" width="186" height="92"></a></h5>
         <nav class="my-2 my-md-0 mr-md-3">
-            <a class="p-2 text-dark" href="#">Auto ausborgen</a>
-            <a class="p-2 text-dark" href="#">Ausgeborgte Autos <span class="badge badge-primary">2</span></a>
-            <a class="p-2 text-dark" href="#"><img src="img/person.png" height=40 width=40>&nbsp;Max&nbsp;Maier</a>
+            <a class="p-2 text-dark" href="#rentcar">Auto ausborgen</a>
+            <a class="p-2 text-dark" href="#rentedcars">Ausgeborgte Autos <span class="badge badge-primary rented-cars-counter">2</span></a>
+            <a class="p-2 text-dark" href="#"><img src="img/person.png" height=40 width=40>&nbsp;Hi!</a>
         </nav>
     </div>
 
     <div class="pricing-header pt-5 pb-5 mx-auto text-center" style="background-color: #c43b3b; color: white;">
-        <h1 class="display-4">Verfügbare Autos</h1>
+        <h1 id="rentcar" class="display-4">Verfügbare Autos</h1>
         <p class="lead">Wähle ein verfügbares Auto aus. Der Preis wird pro angefangen Tag berechnet.</p>
     </div>
 
-    <div class="container" style="position: relative; top:-30px;">
+    <div class="container " style="position: relative; top:-30px;">
         <div class="row justify-content-around">
-            <div class="col-12 col-xl-7">
-                    <div class="card">
-                        <div class="card-body availabe-cars-container">
-                            <div class="car">
-                                <div class="line-1">
-                                    <div class="car-description car-img"><img src="img/sedan-car-model.svg"></div>
-                                    <div class="car-description car-color" style="background-color: red"></div>
-                                    <div class="car-description car-label">Opel</div>
-                                    <div class="car-description car-model">Astra GTC</div>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="line-2">
-                                    <div class="car-description car-price">60,-€/Tag</div>
-                                    <div class="car-description car-rent"><button type="button" class="btn btn-primary car-rent-btn">ausborgen</button></div>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="clearfix"></div>
+            <div class="col-12 col-xl-12">
+                <div class="card search-form-container">
+                    <div class="card-body">
+                        <form class="form-inline search-form">
+                            <!-- <div class="form-group">
+                                <label for="startDate">Verfügbar zwischen &nbsp;</label>
+                                <input type="date" id="startDate" class="form-control" >
                             </div>
+                            <div class="form-group">
+                                <label for="endDate">&nbsp;und&nbsp;</label>
+                                <input type="date" id="endDate" class="form-control">
+                            </div> -->
+                            <div class="form-group">
+                                <label for="currency">Bitte wähle deine gewünschte Währung aus:&nbsp;&nbsp;</label>
+                                <select type="date" id="currency" class="form-control">
+                                    <option value="EUR">Euro</option>
+                                    <option value="RUB">Russische Rubel</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>        
+        <div class="row justify-content-around">
+            <div class="col-12 col-xl-7 availabe-cars-container">
 
-                            <div class="car">
-                                <div class="line-1">
-                                    <div class="car-description car-img"><img src="img/jeep.svg"></div>
-                                    <div class="car-description car-color" style="background-color: red"></div>
-                                    <div class="car-description car-label">Jeep</div>
-                                    <div class="car-description car-model">Astra GTC</div>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="line-2">
-                                    <div class="car-description car-price">60,-€/Tag</div>
-                                    <div class="car-description car-rent"><button type="button" class="btn btn-primary car-rent-btn">ausborgen</button></div>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="clearfix"></div>
-                            </div>
-                            
+                <div class="card car">
+                    <img class="car-img" src=" http://flask-env.igdtepjkiu.eu-central-1.elasticbeanstalk.com/static/img/ferrari.jpg" alt="car image">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span class="car-description car-label">Opel</span>&nbsp;
+                            <span class="car-description car-model">Astra GTC</span>
+                        </h5>
+                        <span class="car-description car-price">60,-€/Tag</span><button type="button" class="btn btn-primary car-rent-btn">ausborgen</button>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+                <div class="card car">
+                    <img class="car-img" src=" http://flask-env.igdtepjkiu.eu-central-1.elasticbeanstalk.com/static/img/ferrari.jpg" alt="car image">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span class="car-description car-label">Opel</span>&nbsp;
+                            <span class="car-description car-model">Astra GTC</span>
+                        </h5>
+                        <span class="car-description car-price">60,-€/Tag</span><button type="button" class="btn btn-primary car-rent-btn">ausborgen</button>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+                <div class="card car">
+                        <img class="car-img" src=" http://flask-env.igdtepjkiu.eu-central-1.elasticbeanstalk.com/static/img/ferrari.jpg" alt="car image">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <span class="car-description car-label">Opel</span>&nbsp;
+                                <span class="car-description car-model">Astra GTC</span>
+                            </h5>
+                            <span class="car-description car-price">60,-€/Tag</span><button type="button" class="btn btn-primary car-rent-btn">ausborgen</button>
+                            <div class="clearfix"></div>
                         </div>
                     </div>
+
             </div>
             <div class="col-12 col-xl-5">
                     <div class="card">
@@ -84,55 +110,30 @@
             </div>
         </div>
     </div>
-
     <div class="pt-5 pb-5 mx-auto text-center" style="background-color: #c43b3b; color: white;">
-        <h1 class="display-4">Deine ausgeborgten Autos</h1>
+        <h1 id="rentedcars" class="display-4">Deine ausgeborgten Autos</h1>
         <p class="lead">Du hast derzeit folgende Autos ausgeborgt:</p>
     </div>
 
     <div class="container" style="position: relative; top:-30px; margin-bottom:100px;">
         <div class="row justify-content-around">
-            <div class="col-12">
-                    <div class="card">
-                        <div class="card-body rented-cars-container">
-                            <div class="car">
-                                <div class="line-1">
-                                    <div class="car-description car-img"><img src="img/sedan-car-model.svg"></div>
-                                    <div class="car-description car-color" style="background-color: red"></div>
-                                    <div class="car-description car-label">Opel</div>
-                                    <div class="car-description car-model">Astra GTC</div>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="line-2">
-                                    <div class="car-description car-price">60,-€/Tag</div>
-                                    <div class="car-description car-rent-since">seit 18.8.2016</div>
-                                    <div class="car-description car-costs">= 240,-€</div>                                    
-                                    <div class="car-description car-return"><button type="button" class="btn btn-primary car-return-btn">retournieren</button></div>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="clearfix"></div>
-                            </div>
-                            
-                            <div class="car">
-                                    <div class="line-1">
-                                        <div class="car-description car-img"><img src="img/sedan-car-model.svg"></div>
-                                        <div class="car-description car-color" style="background-color: red"></div>
-                                        <div class="car-description car-label">Megalanges Auto</div>
-                                        <div class="car-description car-model">Bezeichnung XYZ xt-234</div>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                    <div class="line-2">
-                                        <div class="car-description car-price">60,-€/Tag</div>
-                                        <div class="car-description car-rent-since">seit 18.8.2016</div>
-                                        <div class="car-description car-costs">= 240,-€</div>                                    
-                                        <div class="car-description car-return"><button type="button" class="btn btn-primary car-return-btn">retournieren</button></div>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
+            <div class="col-12 rented-cars-container">
+
+                    <div class="card car">
+                        <img class="car-img" src=" http://flask-env.igdtepjkiu.eu-central-1.elasticbeanstalk.com/static/img/ferrari.jpg" alt="car image">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <span class="car-description car-label">Opel</span>&nbsp;
+                                <span class="car-description car-model">Astra GTC</span>
+                            </h5>
+                            <div class="car-description car-price">60,-€/Tag</div>
+                            <div class="car-description car-rent-since">seit 18.8.2016</div>
+                            <span class="car-description car-costs">240,-€</span>  
+                            <button type="button" class="btn btn-primary car-return-btn">retournieren</button>
+                            <div class="clearfix"></div>
                         </div>
                     </div>
-            </div>
+                    </div>
         </div>
     </div>
 
@@ -171,6 +172,36 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="rentCarOptions" tabindex="-1" role="dialog" aria-labelledby="rentCarOptionsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="rentCarOptionsLabel">Auto ausborgen</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="form-group">
+                  <label for="startDate" class="col-form-label">Vom:</label>
+                  <input type="date" class="form-control" id="startDate">
+                </div>
+                <div class="form-group">
+                  <label for="endDate" class="col-form-label">Bis zum:</label>
+                  <input type="date" class="form-control" id="endDate">
+                </div>
+                <input type="hidden" id="carId">
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+              <button type="button" class="btn btn-primary rentCar-btn">Ausborgen</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
