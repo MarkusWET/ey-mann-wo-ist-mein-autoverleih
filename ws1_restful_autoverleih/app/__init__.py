@@ -15,6 +15,7 @@ application = Flask(__name__, template_folder="../templates")
 # TODO @markuswet: look into secure config for key
 application.config["SECRET_KEY"] = "the quick brown fox jumps over the lazy dog"
 application.config["SQLALCHEMY_COMMIT_ON_TEARDOWN"] = True
+application.config["CURRENCY_CONVERTER_WSDL"] = "http://currencyconverterservice-dev.eu-central-1.elasticbeanstalk.com/CurrencyService.svc?wsdl"
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db.sqlite")
 application.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///{}".format(

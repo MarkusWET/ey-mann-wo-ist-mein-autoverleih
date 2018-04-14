@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from suds.client import Client
+from app import application
 import hashlib
 
 # Get SOAP Service via suds
-# TODO @markuswet: implement error handling when CurrencyService is offline.
-url = "http://currencyconverterservice-dev.eu-central-1.elasticbeanstalk.com/CurrencyService.svc?wsdl"
-client = Client(url)
+url = application.config["CURRENCY_CONVERTER_WSDL"]
+try:
+    client = Client(url)
+except:
+    pass
 
 SECRET_SOAP_KEY = b"CorrectHorseBatteryStaple"
 HASHED_SOAP_KEY = hashlib.sha256(SECRET_SOAP_KEY).hexdigest()
@@ -18,8 +21,16 @@ VALID_CURRENCIES = (
 
 
 def convert_from_eur(target_currency, amount):
-    return client.service.CrossConvert("EUR", target_currency, amount, HASHED_SOAP_KEY)
+    try:
+        conversion = client.service.CrossConvert("EUR", target_currency, amount, HASHED_SOAP_KEY)
+    except:
+        conversion = -1
+    return conversion
 
 
 def convert_to_eur(input_currency, amount):
-    return client.service.ConvertToEur(input_currency, amount, HASHED_SOAP_KEY)
+    try:
+        conversion = client.service.ConvertToEur(input_currency, amount, HASHED_SOAP_KEY)
+    except:
+        conversion = -1
+    return conversion

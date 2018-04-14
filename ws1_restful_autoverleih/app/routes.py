@@ -222,7 +222,11 @@ def get_available_cars():
 
     if target_currency != "EUR":
         for car in available:
-            car.price_per_day = convert_from_eur(target_currency, str(car.price_per_day))
+            price = convert_from_eur(target_currency, str(car.price_per_day))
+            if price == -1:
+                abort(Response("Conversion service not available.", 500))
+
+            car.price_per_day = price
     return jsonify(available=[e.serialize() for e in available], currency=target_currency)
 
 
@@ -244,7 +248,11 @@ def get_all_cars():
 
     if target_currency != "EUR":
         for car in all_cars:
-            car.price_per_day = convert_from_eur(target_currency, str(car.price_per_day))
+            price = convert_from_eur(target_currency, str(car.price_per_day))
+            if price == -1:
+                abort(Response("Conversion service not available.", 500))
+
+            car.price_per_day = price
     return jsonify(available=[e.serialize() for e in all_cars], currency_format=target_currency)
 
 
@@ -285,7 +293,11 @@ def get_rented_cars_of_user(user_id):
 
     if target_currency != "EUR":
         for car in rented_cars:
-            car.price_per_day = convert_from_eur(target_currency, str(car.price_per_day))
+            price = convert_from_eur(target_currency, str(car.price_per_day))
+            if price == -1:
+                abort(Response("Conversion service not available.", 500))
+
+            car.price_per_day = price
 
     return jsonify(rentals=[e.serialize() for e in rented_cars], currency=target_currency)
 
