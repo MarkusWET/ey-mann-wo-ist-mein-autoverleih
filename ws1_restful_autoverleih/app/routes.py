@@ -169,6 +169,44 @@ def return_car(car_id):
     return Response("Car with ID {} returned successfully.".format(car_id), 200)
 
 
+@application.route("/api/car/<car_id>/gps", methods=["PUT"])
+@auth.login_required
+def update_car_gps(car_id):
+    gps_long = -1.0
+    gps_lat = -1.0
+
+    try:
+        car_id = int(car_id)
+    except ValueError:
+        abort(Response("Car ID must be a number\n", 400))
+
+    # TODO @markuswet: GPS coordinates logical validation
+    try:
+        gps_lat = float(request.json.get("latitude"))
+    except ValueError:
+        abort(Response("Latitude must be a number\n", 400))
+
+    try:
+        gps_long = float(request.json.get("longitude"))
+    except ValueError:
+        abort(Response("Longitude must be a number\n", 400))
+
+    # Try to find car
+    car = Car.query.get(car_id)
+    if car is None:
+        abort(Response("Car with ID {} not found.\n".format(car), 404))
+    car.gps_lat = gps_lat
+    car.gps_long = gps_long
+
+    try:
+        db.session.commit()
+    except exc.SQLAlchemyError:
+        db.session.rollback()
+        abort(Response("Query unsuccessful. Changes rolled back.\n", 500))
+
+    return jsonify(car=car.serialize())
+
+
 @application.route("/api/car/available", methods=["PUT"])
 @auth.login_required
 def get_available_cars():

@@ -108,6 +108,7 @@ curl -u $JWT -i -X GET http://127.0.0.1:5000/api/car/all?currency=RUB
   ]
 }
 ```
+
 ### List all rented cars of user - `GET /api/user/<user_id>/rented`
 ***Requires authetication***
 
@@ -164,4 +165,34 @@ http://127.0.0.1:5000/api/car/1/return
 **Response**
 ```
 Car with ID 1 returned successfully.
+```
+
+
+### Update car's GPS coordinates - `PUT /api/car/<car_id>/gps`
+
+***Requires authetication***
+
+**Request**
+```shell
+curl -u $JWT \
+-i -X PUT -H "Content-Type: application/json" \ 
+-d '{"longitude":"20","latitude":"-50"}' \
+http://127.0.0.1:5000/api/car/1/gps
+
+```
+
+**Response**
+```json
+{
+  "car": {
+    "color": "#0088CC", 
+    "company": "Ford", 
+    "gps_lat": -50.0, 
+    "gps_long": 20.0, 
+    "id": 1, 
+    "image_file_name": "mustang.JPG", 
+    "model": "Mustang", 
+    "price_per_day": 150.0
+  }
+}
 ```
