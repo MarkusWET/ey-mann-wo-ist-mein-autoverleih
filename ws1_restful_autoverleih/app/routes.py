@@ -1,4 +1,4 @@
-from app import application, db, auth, cors
+from app import application, db, basic_auth, cors
 from app.currency_exchange import convert_from_eur, convert_to_eur, VALID_CURRENCIES
 from app.data_models.User import User
 from app.data_models.RentalHistory import RentalHistory
@@ -8,7 +8,7 @@ from flask import abort, request, jsonify, g, url_for, send_from_directory, rend
 from sqlalchemy import exc
 
 
-@auth.verify_password
+@basic_auth.verify_password
 def verify_password(username_or_token, password):
     # first try to authenticate by token
     user = User.verify_auth_token(username_or_token)
@@ -28,27 +28,28 @@ def home():
         return render_template("index.html", text=content)
 
 
-@application.route("/api/users", methods=["POST"])
-def new_user():
-    username = request.json.get("username")
-    password = request.json.get("password")
-    if username is None or password is None:
-        abort(400)  # missing arguments
-    if User.query.filter_by(username=username).first() is not None:
-        abort(400)  # existing user
-    user = User(username=username)
-    user.hash_password(password)
-    # TODO @markuswet: refactor to implement PBKDF2 with Salt and Iterations
-    db.session.add(user)
-
-    try:
-        db.session.commit()
-    except exc.SQLAlchemyError:
-        db.session.rollback()
-        abort(Response("Query unsuccessful. Changes rolled back.\n", 500))
-
-    return (jsonify({"username": user.username}), 201,
-            {"Location": url_for("get_user", user_id=user.id, _external=True)})
+# MOVED TO app/auth
+# @application.route("/api/users", methods=["POST"])
+# def new_user():
+#     username = request.json.get("username")
+#     password = request.json.get("password")
+#     if username is None or password is None:
+#         abort(400)  # missing arguments
+#     if User.query.filter_by(username=username).first() is not None:
+#         abort(400)  # existing user
+#     user = User(username=username)
+#     user.hash_password(password)
+#     # TODO @markuswet: refactor to implement PBKDF2 with Salt and Iterations
+#     db.session.add(user)
+#
+#     try:
+#         db.session.commit()
+#     except exc.SQLAlchemyError:
+#         db.session.rollback()
+#         abort(Response("Query unsuccessful. Changes rolled back.\n", 500))
+#
+#     return (jsonify({"username": user.username}), 201,
+#             {"Location": url_for("get_user", user_id=user.id, _external=True)})
 
 
 @application.route("/api/users/<user_id>")
@@ -60,14 +61,14 @@ def get_user(user_id):
 
 
 @application.route("/api/token")
-@auth.login_required
+@basic_auth.login_required
 def get_auth_token():
     token = g.user.generate_auth_token(60000)  # TODO @markuswet: Discuss with @mweber if duration is long/short enough
     return jsonify({"token": token.decode("ascii"), "duration": 60000})
 
 
 @application.route("/api/car/<car_id>/rent", methods=["PUT"])
-@auth.login_required
+@basic_auth.login_required
 def rent_car(car_id):
     """Rent car with id car_id for the dates (YYYY-MM-DD) defined in the body with start and end"""
     rental_start_date = "1901-01-01"
@@ -135,7 +136,7 @@ def rent_car(car_id):
 
 
 @application.route("/api/car/<car_id>/return", methods=["PUT"])
-@auth.login_required
+@basic_auth.login_required
 def return_car(car_id):
     # TODO @markuswet (optional): add column return_date and calculate the difference between booked return and actual return as late fee
 
@@ -170,7 +171,7 @@ def return_car(car_id):
 
 
 @application.route("/api/car/<car_id>/gps", methods=["PUT"])
-@auth.login_required
+@basic_auth.login_required
 def update_car_gps(car_id):
     gps_long = -1.0
     gps_lat = -1.0
@@ -208,7 +209,7 @@ def update_car_gps(car_id):
 
 
 @application.route("/api/car/available", methods=["PUT"])
-@auth.login_required
+@basic_auth.login_required
 def get_available_cars():
     rental_start_date = "1901-01-01"
     rental_end_date = "1901-01-01"
@@ -298,7 +299,7 @@ def get_all_cars():
 
 
 @application.route("/api/user/<user_id>/rented")
-@auth.login_required
+@basic_auth.login_required
 def get_rented_cars_of_user(user_id):
     uid = 0
 
