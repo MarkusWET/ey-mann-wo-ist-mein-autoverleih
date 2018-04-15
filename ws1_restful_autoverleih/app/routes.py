@@ -248,25 +248,27 @@ def get_available_cars():
     db.session.close()
 
     if len(available) < 1:
-        abort(Response("No cars available!", 404))
+        return_json = jsonify(available="")
+    else:
+        # TODO @markuswet: refactor recalculation into own method
+        # Re-calculate prices in target currency
+        target_currency = request.args.get("currency", default="EUR").strip()
+        if not target_currency:
+            target_currency = "EUR"
 
-    # TODO @markuswet: refactor recalculation into own method
-    # Re-calculate prices in target currency
-    target_currency = request.args.get("currency", default="EUR").strip()
-    if not target_currency:
-        target_currency = "EUR"
+        if target_currency not in VALID_CURRENCIES:
+            abort(Response("Invalid currency.", 400))
 
-    if target_currency not in VALID_CURRENCIES:
-        abort(Response("Invalid currency.", 400))
+        if target_currency != "EUR":
+            for car in available:
+                price = convert_from_eur(target_currency, str(car.price_per_day))
+                if price == -1:
+                    abort(Response("Conversion service not available.", 500))
 
-    if target_currency != "EUR":
-        for car in available:
-            price = convert_from_eur(target_currency, str(car.price_per_day))
-            if price == -1:
-                abort(Response("Conversion service not available.", 500))
+                car.price_per_day = price
+        return_json = jsonify(available=[e.serialize() for e in available], currency=target_currency)
 
-            car.price_per_day = price
-    return jsonify(available=[e.serialize() for e in available], currency=target_currency)
+    return return_json
 
 
 @application.route("/api/car/all")
@@ -319,26 +321,28 @@ def get_rented_cars_of_user(user_id):
     db.session.close()
 
     if len(rented_cars) < 1:
-        abort(Response("No rented cars for User {} found".format(uid), 200))
+        return_json = jsonify(rentals="")
+    else:
+        # TODO @markuswet: refactor recalculation into own method
+        # Re-calculate prices in target currency
+        target_currency = request.args.get("currency", default="EUR").strip()
+        if not target_currency:
+            target_currency = "EUR"
 
-    # TODO @markuswet: refactor recalculation into own method
-    # Re-calculate prices in target currency
-    target_currency = request.args.get("currency", default="EUR").strip()
-    if not target_currency:
-        target_currency = "EUR"
+        if target_currency not in VALID_CURRENCIES:
+            abort(Response("Invalid currency.", 400))
 
-    if target_currency not in VALID_CURRENCIES:
-        abort(Response("Invalid currency.", 400))
+        if target_currency != "EUR":
+            for car in rented_cars:
+                price = convert_from_eur(target_currency, str(car.price_per_day))
+                if price == -1:
+                    abort(Response("Conversion service not available.", 500))
 
-    if target_currency != "EUR":
-        for car in rented_cars:
-            price = convert_from_eur(target_currency, str(car.price_per_day))
-            if price == -1:
-                abort(Response("Conversion service not available.", 500))
+                car.price_per_day = price
 
-            car.price_per_day = price
+        return_json = jsonify(rentals=[e.serialize() for e in rented_cars], currency=target_currency)
 
-    return jsonify(rentals=[e.serialize() for e in rented_cars], currency=target_currency)
+    return return_json
 
 
 @application.route("/api/car/<car_id>/img")
