@@ -31,5 +31,4 @@ SOAPpy==0.12.22
 SQLAlchemy==1.1.11
 suds-jurko==0.6
 Werkzeug==0.12.2
-ws1-restful-autoverleih==1.0.0
 wstools==0.4.5
