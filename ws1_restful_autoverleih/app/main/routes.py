@@ -1,4 +1,4 @@
-from app import application, db, basic_auth, cors
+from app import db, basic_auth, cors
 from app.currency_exchange import convert_from_eur, convert_to_eur, VALID_CURRENCIES
 from app.data_models.User import User
 from app.data_models.RentalHistory import RentalHistory
@@ -6,7 +6,10 @@ from app.data_models.Car import Car
 from datetime import datetime, timedelta
 from flask import abort, request, jsonify, g, url_for, send_from_directory, render_template, Response
 from sqlalchemy import exc
+from app.main import bp
 
+
+# route prefix = /api
 
 @basic_auth.verify_password
 def verify_password(username_or_token, password):
@@ -21,7 +24,7 @@ def verify_password(username_or_token, password):
     return True
 
 
-@application.route("/")
+@bp.route("/")
 def home():
     with open("./README.md") as f:
         content = f.read()
@@ -29,7 +32,7 @@ def home():
 
 
 # MOVED TO app/auth
-# @application.route("/api/users", methods=["POST"])
+# @bp.route("/users", methods=["POST"])
 # def new_user():
 #     username = request.json.get("username")
 #     password = request.json.get("password")
@@ -51,23 +54,23 @@ def home():
 #     return (jsonify({"username": user.username}), 201,
 #             {"Location": url_for("get_user", user_id=user.id, _external=True)})
 
+#
+# @bp.route("/users/<user_id>")
+# def get_user(user_id):
+#     user = User.query.get(user_id)
+#     if not user:
+#         abort(400)  # TODO @markuswet: is 400 BAD REQUEST really a good Status Code for data not found?
+#     return jsonify({"username": user.username})
+#
+#
+# @bp.route("/token")
+# @basic_auth.login_required
+# def get_auth_token():
+#     token = g.user.generate_auth_token(60000)  # TODO @markuswet: Discuss with @mweber if duration is long/short enough
+#     return jsonify({"token": token.decode("ascii"), "duration": 60000})
+#
 
-@application.route("/api/users/<user_id>")
-def get_user(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        abort(400)  # TODO @markuswet: is 400 BAD REQUEST really a good Status Code for data not found?
-    return jsonify({"username": user.username})
-
-
-@application.route("/api/token")
-@basic_auth.login_required
-def get_auth_token():
-    token = g.user.generate_auth_token(60000)  # TODO @markuswet: Discuss with @mweber if duration is long/short enough
-    return jsonify({"token": token.decode("ascii"), "duration": 60000})
-
-
-@application.route("/api/car/<car_id>/rent", methods=["PUT"])
+@bp.route("/car/<car_id>/rent", methods=["PUT"])
 @basic_auth.login_required
 def rent_car(car_id):
     """Rent car with id car_id for the dates (YYYY-MM-DD) defined in the body with start and end"""
@@ -135,7 +138,7 @@ def rent_car(car_id):
         return Response("Car {} rented successfully.\n".format(car.id), 200)
 
 
-@application.route("/api/car/<car_id>/return", methods=["PUT"])
+@bp.route("/car/<car_id>/return", methods=["PUT"])
 @basic_auth.login_required
 def return_car(car_id):
     # TODO @markuswet (optional): add column return_date and calculate the difference between booked return and actual return as late fee
@@ -170,7 +173,7 @@ def return_car(car_id):
     return Response("Car with ID {} returned successfully.".format(car_id), 200)
 
 
-@application.route("/api/car/<car_id>/gps", methods=["PUT"])
+@bp.route("/car/<car_id>/gps", methods=["PUT"])
 @basic_auth.login_required
 def update_car_gps(car_id):
     gps_long = -1.0
@@ -208,7 +211,7 @@ def update_car_gps(car_id):
     return jsonify(car=car.serialize())
 
 
-@application.route("/api/car/available", methods=["PUT"])
+@bp.route("/car/available", methods=["PUT"])
 @basic_auth.login_required
 def get_available_cars():
     rental_start_date = "1901-01-01"
@@ -272,7 +275,7 @@ def get_available_cars():
     return return_json
 
 
-@application.route("/api/car/all")
+@bp.route("/car/all")
 def get_all_cars():
     all_cars = db.session.query(Car).all()
     db.session.close()
@@ -298,7 +301,7 @@ def get_all_cars():
     return jsonify(available=[e.serialize() for e in all_cars], currency_format=target_currency)
 
 
-@application.route("/api/user/<user_id>/rented")
+@bp.route("/car/user/<user_id>/rented")
 @basic_auth.login_required
 def get_rented_cars_of_user(user_id):
     uid = 0
@@ -346,7 +349,7 @@ def get_rented_cars_of_user(user_id):
     return return_json
 
 
-@application.route("/api/car/<car_id>/img")
+@bp.route("/car/<car_id>/img")
 def get_car_image(car_id):
     error = send_from_directory("static/img", "error.png")
 

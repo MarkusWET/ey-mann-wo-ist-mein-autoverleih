@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from suds.client import Client
-from app import application
 import hashlib
 
 # Get SOAP Service via suds
-url = application.config["CURRENCY_CONVERTER_WSDL"]
+# url = application.config["CURRENCY_CONVERTER_WSDL"]
+# TODO @markuswet: temporary fix due to dependency issues.
+url = "http://currencyconverterservice-dev.eu-central-1.elasticbeanstalk.com/CurrencyService.svc?wsdl"
 try:
     client = Client(url)
 except:
