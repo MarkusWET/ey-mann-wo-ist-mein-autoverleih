@@ -9,7 +9,7 @@
  */
 
 appSettings = {
-    "debbuging": true,
+    "debugging": true,
     "messageHideAfter": 2000, // ms
     "showSystemLoadingAfter": 100, //ms
     "ws1": {
@@ -25,15 +25,17 @@ $(document).ready(function() {
     })
 
     //init cars page
-    if($('body.cars').length && false) {
-        insertAvailableCars(currency);
-
-        userId = getUserId();
+    if($('body.cars').length) {
+        //logged in?
+        userId = getUserId(getAuthToken());
         if(userId == null) {
             log("getUserId: null");
-            showError("Es trat ein Problem auf!");
+            //redirect to login page
+            window.location = "sign-in.html";
         } else {
-            insertRentedCars(userId);
+            currency = 'EUR';
+            insertRentedCars(userId, currency);
+            insertAvailableCars(currency);
         }
     }
 
@@ -41,6 +43,7 @@ $(document).ready(function() {
     $('#currency').change(function(e) {
         currency = $(this).val();
         insertAvailableCars(currency);
+        insertRentedCars(userId, currency);
         e.preventDefault();
     })
 });
@@ -78,7 +81,8 @@ function login(uname, passw) {
 
         storeAuthToken(data.token, Date.now()/1000 + data.duration);
 
-        window.open("/cars.html","_self");
+        //redirect to cars page
+        window.location = "cars.html";
     })
     .fail(function(jqXHR) {
         hideAppLoading();
@@ -116,6 +120,9 @@ function getAuthToken() {
  * extract user id from jwt auth token (not encrypted)
  */
 function getUserId(token) {
+    if(token == null) {
+        return null;
+    }
     // NOTE: jwt token is not verified
     var parts = token.split('.');
     try {
@@ -153,13 +160,13 @@ function getAllAvailableCars(start, end, currency) {
         appSettings.ws1.url + '/car/available?currency='+currency,    // url
         'PUT',  // method
         { // headers
-            "Authorization": "Basic " + getAuthToken() + ':' 
+            "Authorization": "Basic " + Base64.encode(getAuthToken() + ':')
         },
         'json', // returnType
-        { // para
+        JSON.stringify({ // para
             "start" : start,
             "end": end
-        }  
+        })
     )
 }
 
@@ -192,7 +199,7 @@ function getAllCars() {
         appSettings.ws1.url + '/car/all',    // url
         'GET',  // method
         { // headers
-            "Authorization": "Basic " + getAuthToken() + ':' 
+            "Authorization": "Basic " + Base64.encode(getAuthToken() + ':')
         },
         'json', // returnType
         {} // para  
@@ -202,12 +209,12 @@ function getAllCars() {
 /**
  * get all cars rented by the user - request
  */
-function getAllRentedCars(userId) {
+function getAllRentedCars(userId, currency) {
     return ajaxRequest(
-        appSettings.ws1.url + '/user/' + parseInt(userID) + "/rented",    // url
+        appSettings.ws1.url + '/user/' + parseInt(userId) + "/rented",    // url
         'GET',  // method
         { // headers
-            "Authorization": "Basic " + getAuthToken() + ':' 
+            "Authorization": "Basic " + Base64.encode(getAuthToken() + ':')
         },
         'json', // returnType
         {} // para
@@ -225,13 +232,13 @@ function rentCarRequest(carId, start, end) {
         appSettings.ws1.url + '/car/' + parseInt(carId) + "/rent",    // url
         'PUT',  // method
         { // headers
-            "Authorization": "Basic " + getAuthToken() + ':' 
+            "Authorization": "Basic " + Base64.encode(getAuthToken() + ':')
         },
-        'json', // returnType
-        { // para
+        'html', // returnType
+        JSON.stringify({ // para
             "start" : start,
             "end": end
-        }
+        })
     )
 }
 
@@ -246,9 +253,9 @@ function returnCarRequest(carId) {
         appSettings.ws1.url + '/car/' + parseInt(carId) + "/return",    // url
         'PUT',  // method
         { // headers
-            "Authorization": "Basic " + getAuthToken() + ':' 
+            "Authorization": "Basic " + Base64.encode(getAuthToken() + ':')
         },
-        'json', // returnType
+        'html', // returnType
         {} // para
     )
 }
@@ -278,7 +285,7 @@ function insertAvailableCars(currency){
     }
 
     // remove all displayed cars
-    $('.availabe-cars-container').html("");
+    $('.available-cars-container').html("");
 
     getAllAvailableCars("2018-03-12", "2018-03-15", currency)
     .done(function(data) {
@@ -287,11 +294,12 @@ function insertAvailableCars(currency){
 
         // insert HTML
         for (let i = 0; i < data.available.length; i++) {
-            outputAvailableCar(car, data.available[i]);
+            outputAvailableCar(data.available[i], data.currency);
+            console.log(data.available[i]);
         }
 
         // click functions
-        $('.available-cars-container car .car-rent-btn').unbind('click').click(function(){
+        $('.available-cars-container .car .car-rent-btn').unbind('click').click(function(){
             rentCarOptionsOpen($(this).closest('.car').attr('data-id'));
         })
     })
@@ -305,31 +313,16 @@ function insertAvailableCars(currency){
 /**
  * outputs the HTML of a available car
  */
-function outputAvailableCar(car) {
-//     var html = ''+
-// '<div class="car" data-id="' + car.id + '">'+
-//     '<div class="line-1">'+
-//         '<div class="car-description car-img"><img src="img/sedan-car-model.svg"></div>'+
-//         '<div class="car-description car-color" style="background-color: ' + car.color + '"></div>'+
-//         '<div class="car-description car-label">' + car.company + '</div>'+
-//         '<div class="car-description car-model">' + car.model + '</div>'+
-//         '<div class="clearfix"></div>'+
-//     '</div><div class="line-2">'+
-//         '<div class="car-description car-price">' + car.price_per_day + '/Tag</div>'+
-//         '<div class="car-description car-rent"><button type="button" class="btn btn-primary car-rent-btn">ausborgen</button></div>'+
-//         '<div class="clearfix"></div>'+
-//     '</div><div class="clearfix"></div>'+
-// '</div>';
-
+function outputAvailableCar(car, currency) {
     var html = ''+
-    '<div class="card car">'+
-    '<img class="car-img" src=" http://flask-env.igdtepjkiu.eu-central-1.elasticbeanstalk.com/static/img/ferrari.jpg" alt="car image">'+
+    '<div class="card car" data-id="' + car.id + '">'+
+    '<img class="car-img" src=" http://flask-env.igdtepjkiu.eu-central-1.elasticbeanstalk.com/static/img/'+ car.image_file_name + '" alt="car image">'+
     '<div class="card-body">'+
         '<h5 class="card-title">'+
             '<span class="car-description car-label">' + car.company + '</span>&nbsp;'+
             '<span class="car-description car-model">' + car.model + '</span>'+
         '</h5>'+
-        '<span class="car-description car-price">' + car.price_per_day + '/Tag</span>'+
+        '<span class="car-description car-price">' + car.price_per_day + ' ' + currency + '/Tag</span>'+
         '<button type="button" class="btn btn-primary car-rent-btn">ausborgen</button>'+
         '<div class="clearfix"></div>'+
    ' </div>'+
@@ -342,7 +335,7 @@ function outputAvailableCar(car) {
 /**
  * insert cars in the rented cars section
  */
-function insertRentedCars(userId){
+function insertRentedCars(userId, currency){
     showAppLoading();
 
     // remove all displayed cars
@@ -351,20 +344,20 @@ function insertRentedCars(userId){
     // TODO: type of start, end
     $.when(
         getAllCars(),
-        getAllRentedCars(userId)
+        getAllRentedCars(userId, currency)
     )
     .done(function(carsReturn, rentedReturn) {
-        log(['getAllRentedCars:', data]);
+        log(['getAllRentedCars:', carsReturn, rentedReturn]);
         hideAppLoading();
 
         // insert HTML
-        for (let i = 0; i < rentedReturn.rentals.length; i++) {
-            var car_id = rentedReturn.rentals[i].car_id;
+        for (let i = 0; i < rentedReturn[0].rentals.length; i++) {
+            var car_id = rentedReturn[0].rentals[i].car_id;
             var car = null;
 
-            for (let j = 0; j < carsReturn.available.length; j++) {
-                if(carsReturn.available[j].id == car_id)
-                    car = carsReturn.available[j];                
+            for (let j = 0; j < carsReturn[0].available.length; j++) {
+                if(carsReturn[0].available[j].id == car_id)
+                    car = carsReturn[0].available[j];                
             }
             if(car == null) {
                 showError("Fehler: Auto konnte nicht gefunden werden!");
@@ -372,14 +365,14 @@ function insertRentedCars(userId){
                 return;
             }
 
-            outputRentedCar(car, rentedReturn.rentals[i]);
+            outputRentedCar(car, rentedReturn[0].rentals[i], rentedReturn[0].currency);
         }
 
         // update counter in nav
-        updateRentedCarsCounter(rentedReturn.rentals.length);
+        updateRentedCarsCounter(rentedReturn[0].rentals.length);
 
         // click functions
-        $('.rented-cars-container car .car-return-btn').unbind('click').click(function(){
+        $('.rented-cars-container .car .car-return-btn').unbind('click').click(function(){
             returnCar(
                 parseInt($(this).closest('.car').attr('data-id'))
             );
@@ -395,35 +388,19 @@ function insertRentedCars(userId){
 /**
  * outputs the HTML of a rented car
  */
-function outputRentedCar(car, infos) {
-    var html = ''+
-'<div class="car" data-id="' + car.id + '">'+
-    '<div class="line-1">'+
-        '<div class="car-description car-img"><img src="img/sedan-car-model.svg"></div>'+
-        '<div class="car-description car-color" style="background-color: ' + car.color + '"></div>'+
-        '<div class="car-description car-label">' + car.company + '</div>'+
-       ' <div class="car-description car-model">' + car.model + '</div>'+
-       ' <div class="clearfix"></div>'+
-    '</div><div class="line-2">'+
-        '<div class="car-description car-price">' + car.price_per_day + '/Tag</div>'+
-        '<div class="car-description car-rent-since">seit ' + infos.rented_from + '</div>'+
-        '<div class="car-description car-costs">= ' + infos.total_price + '</div>'+
-        '<div class="car-description car-return"><button type="button" class="btn btn-primary car-return-btn">retournieren</button></div>'+
-        '<div class="clearfix"></div>'+
-    '</div><div class="clearfix"></div>'+
-'</div>';
+function outputRentedCar(car, infos, currency) {
 
     var html = ''+
-    '<div class="card car">'+
-    '<img class="car-img" src=" http://flask-env.igdtepjkiu.eu-central-1.elasticbeanstalk.com/static/img/ferrari.jpg" alt="car image">'+
+    '<div class="card car" data-id="' + car.id + '">'+
+    '<img class="car-img" src=" http://flask-env.igdtepjkiu.eu-central-1.elasticbeanstalk.com/static/img/'+ car.image_file_name + '" alt="car image">'+
     '<div class="card-body">'+
         '<h5 class="card-title">'+
             '<span class="car-description car-label">' + car.company + '</span>&nbsp;'+
             '<span class="car-description car-model">' + car.model + '</span>'+
         '</h5>'+
-        '<div class="car-description car-price">' + car.price_per_day + '/Tag</div>'+
-        '<div class="car-description car-rent-since">seit 18.8.2016</div>'+
-        '<span class="car-description car-costs">= 240,-€</span>'+
+        '<div class="car-description car-price">' + car.price_per_day + ' ' + currency + '/Tag</div>'+
+        '<div class="car-description car-rent-since">seit  ' + infos.rented_from + '</div>'+
+        '<span class="car-description car-costs">= ' + infos.total_price + ' ' + currency + '</span>'+
         '<button type="button" class="btn btn-primary car-return-btn">retournieren</button>'+
         '<div class="clearfix"></div>'+
     ' </div>'+
@@ -443,12 +420,9 @@ function returnCar(carId) {
         log(['returnCar:', data]);
         hideAppLoading();
 
-        //remove rented car
-        $('.rented-cars-container').find('car[data-id="' + carId + '"]').remove();
-
         //update view
         insertAvailableCars(currency);
-
+        insertRentedCars(userId, currency);
 
         showMessage("Danke fürs zurück bringen!");
     })
@@ -464,8 +438,10 @@ function returnCar(carId) {
  */
 function rentCarOptionsOpen(carId) {
     $('#carId').val(parseInt(carId));
+    console.log("id:"+carId);
 
     $('#rentCarOptions .rentCar-btn').unbind('click').click(function(){
+        $('#rentCarOptions').modal('hide');
         var startDate = getDateFromForm($('#startDate'));
         var endDate = getDateFromForm($('#startDate'));
         if(startDate != null && endDate != null) {
@@ -492,11 +468,9 @@ function rentCar(carId, start, end) {
         log(['rentCar:', data]);
         hideAppLoading();
 
-        //remove available car
-        $('.availabe-cars-container').find('car[data-id="' + carId + '"]').remove();
-
         //update view
-        insertRentedCars(userId);
+        insertAvailableCars(currency);
+        insertRentedCars(userId, currency);
 
         showMessage("Viel Spaß mit deinem Auto!");
     })
@@ -519,11 +493,14 @@ function updateRentedCarsCounter(amount) {
  */
 function getDateFromForm(element) {
     var value = element.val();
-    var date = Date.parse(value); // timestamp in ms
-    if(date > 0)
+    var date = Date.parseExact(value, 'yyyy-M-d'); // timestamp in ms
+    console.log(date);
+    console.log(date.getYear()+'-'+date.getMonth()+'-'+date.getDay());
+    if(date == null)
         return null;
-    return date/1000;
+    return date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate();
 }
+
 
 
 /**
