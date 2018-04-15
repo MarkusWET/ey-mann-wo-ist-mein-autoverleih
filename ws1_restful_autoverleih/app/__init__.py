@@ -16,10 +16,14 @@ md = Misaka()
 basic_auth = HTTPBasicAuth()
 
 
-def create_app():
+def create_app(test_config=None):
     # FYI: AWS ElaticBeanstalk needs the app to be called "application".
     # The starting script also has to be called "application.py"
     application = Flask(__name__, template_folder="../templates")
+
+    if test_config is not None:
+        # load the test config if passed in
+        application.config.update(test_config)
 
     # TODO @markuswet: look into secure config for key
     application.config["SECRET_KEY"] = "the quick brown fox jumps over the lazy dog"

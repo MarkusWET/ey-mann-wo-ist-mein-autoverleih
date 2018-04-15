@@ -7,7 +7,7 @@ matrix:
       install:
         - pip install -r requirements.txt
       script:
-        - python ./tests/autoverleih_tests.py test
+        - pytest
         
     - language: csharp
       solution: ./ws2_soap_waehrungsrechner/WSCurrencyConverter/WSCurrencyConverter.sln
