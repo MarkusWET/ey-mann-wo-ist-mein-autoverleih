@@ -1,12 +1,72 @@
+<!DOCTYPE html>
 <html>
-<body>
-<iframe
-  width="600"
-  height="450"
-  frameborder="0" style="border:0"
-  src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCLFShBaQXRnntV81K37nkeHeHKafzLB5E
-    &q=Golden+Harp,Vienna+Austria" allowfullscreen>
-</iframe>
-</body>
+  <head>
+	<meta charset="utf-8">
+	<title>GMaps</title>
+    <style>
+       #map {
+        height: 400px;
+        width: 100%;
+       }	   
+    </style>
+  </head>
+  <body>
+    <h3>Car Locations</h3>
+    <div id="map"></div> 	
+    <script>
+	
+	//car objects
+	var cars = {
+	//hex values do not work with '#'
+	car1 : {company: 'Ford', model: 'Mustang', gps_lat: '48.213024', gps_long: '16.384843', color: '0088CC'},
+	car2 : {company: 'Lada', model: 'Taiga', gps_lat: '48.207865', gps_long: '16.381410', color: '50191F'},
+	car3 : {company: 'Ferrari', model: 'Enzo', gps_lat: '48.203445', gps_long: '16.393948', color: 'FF2800'}
+	}	
+	
+	// cars array
+	var allCars = [];
 
+	// Populate cars array
+	for(var key in cars) {
+    allCars.push(cars[key]);
+	}
+					
+     function initMap() {
+	  
+	  //limits the map to vienna
+        var vienna = {lat: 48.205, lng: 16.376}; 
+        var map = new google.maps.Map(document.getElementById('map'), { 
+         zoom: 12, 
+          center: vienna
+        });  
+
+		for (var i = 0; i < allCars.length; i++) {
+		
+			var pinColor = allCars[i].color;
+			var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+			new google.maps.Size(21, 34),
+			new google.maps.Point(0,0),
+			new google.maps.Point(10, 34));
+			var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+			new google.maps.Size(40, 37),
+			new google.maps.Point(0, 0),
+			new google.maps.Point(12, 35));
+		
+          var latLng = new google.maps.LatLng(allCars[i].gps_lat,allCars[i].gps_long);
+          var marker = new google.maps.Marker({
+
+            position: latLng,
+				map: map,
+				title: allCars[i].company+' '+allCars[i].model,
+				icon: pinImage,
+                shadow: pinShadow
+          }); 
+		}
+	  }
+	  
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCLFShBaQXRnntV81K37nkeHeHKafzLB5E&callback=initMap">
+    </script>
+  </body>
 </html>
