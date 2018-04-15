@@ -295,8 +295,10 @@ function insertAvailableCars(currency){
         // insert HTML
         for (let i = 0; i < data.available.length; i++) {
             outputAvailableCar(data.available[i], data.currency);
-            console.log(data.available[i]);
         }
+
+        // init tag
+        initMap(data.available);
 
         // click functions
         $('.available-cars-container .car .car-rent-btn').unbind('click').click(function(){
@@ -438,7 +440,6 @@ function returnCar(carId) {
  */
 function rentCarOptionsOpen(carId) {
     $('#carId').val(parseInt(carId));
-    console.log("id:"+carId);
 
     $('#rentCarOptions .rentCar-btn').unbind('click').click(function(){
         $('#rentCarOptions').modal('hide');
@@ -494,8 +495,6 @@ function updateRentedCarsCounter(amount) {
 function getDateFromForm(element) {
     var value = element.val();
     var date = Date.parseExact(value, 'yyyy-M-d'); // timestamp in ms
-    console.log(date);
-    console.log(date.getYear()+'-'+date.getMonth()+'-'+date.getDay());
     if(date == null)
         return null;
     return date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate();
