@@ -237,7 +237,8 @@ def get_available_cars():
 
     # Get all car_ids that are rented in the timeframe
     rentals_subquery = db.session.query(RentalHistory.car_id). \
-        filter(RentalHistory.rented_from < rental_end_date, RentalHistory.rented_to > rental_start_date). \
+        filter(RentalHistory.rented_from < rental_end_date, RentalHistory.rented_to > rental_start_date,
+               RentalHistory.returned == False). \
         subquery()
 
     # get all cars that are not in the rented car_ids
